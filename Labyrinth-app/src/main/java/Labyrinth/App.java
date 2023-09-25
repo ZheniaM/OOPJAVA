@@ -1,7 +1,7 @@
 package Labyrinth;
 import java.util.Scanner;
 
-public class Labyrinth {
+public class App {
 	static public void main(String args[]) {
 		Scanner scan = new Scanner(System.in);
 		System.out.println("Hello World");
