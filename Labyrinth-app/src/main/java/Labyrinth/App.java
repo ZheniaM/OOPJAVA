@@ -1,5 +1,4 @@
-package OOPJAVA;
-
+package Labyrinth;
 import java.util.Scanner;
 
 public class Labyrinth {
