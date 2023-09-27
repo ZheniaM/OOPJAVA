@@ -9,6 +9,6 @@ import org.junit.Test;
 public class AppTest {
 	@Test
 	public void testTrue() {
-		Assert.assertTrue(true);;
+		Assert.assertTrue(true);
 	}
 }
