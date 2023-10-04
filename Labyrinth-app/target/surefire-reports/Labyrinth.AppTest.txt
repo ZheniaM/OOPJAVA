@@ -1,4 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: Labyrinth.AppTest
 -------------------------------------------------------------------------------
+<<<<<<< HEAD
 Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.055 s - in Labyrinth.AppTest
+=======
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.142 s - in Labyrinth.AppTest
+>>>>>>> 28e49e31ba7e8bfff849459924c11935aafe2631

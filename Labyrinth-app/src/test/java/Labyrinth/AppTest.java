@@ -10,6 +10,7 @@ import org.junit.Test;
  */
 public class AppTest {
 	@Test
+<<<<<<< HEAD
   public void testInput() {
     String input = "f";
     String expectedOutput = "You went forward";
@@ -35,5 +36,10 @@ public class AppTest {
         return "There is no such direction";
     }
   }
+=======
+	public void testTrue() {
+		Assert.assertTrue(true);
+	}
+>>>>>>> 28e49e31ba7e8bfff849459924c11935aafe2631
 }
 
