@@ -3,8 +3,6 @@ package Labyrinth;
 import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import static org.junit.Assert.assertEquals;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
