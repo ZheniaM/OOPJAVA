@@ -25,6 +25,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 	@Override
 	public String getBotToken() {
+		/*
 		Scanner scanner;
 		String result;
 		try {
@@ -36,6 +37,8 @@ public class TelegramBot extends TelegramLongPollingBot {
 			System.out.println(e);
 		}
 		return result;
+		*/
+		return "";
 	}
 
 	@Override
