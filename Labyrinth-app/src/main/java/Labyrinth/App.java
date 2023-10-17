@@ -15,13 +15,13 @@ public class App {
 	private static Character player;
 	private static TelegramBot bot;
 
-	
 
-	static public void main(String[] args) throws TelegramApiException{
+
+	static public void main(String[] args) throws TelegramApiException {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
 		telegramBotsApi.registerBot(new TelegramBot(null));
 		App app = new App();
-        TelegramBot bot = new TelegramBot(app);
+		App.bot = new TelegramBot(app);
 		initScene();
 		mainLoop();
 		scanner.close();
@@ -44,13 +44,9 @@ public class App {
 	private static void initScene() {
 		App.scanner = new Scanner(System.in);
 		App.player = new Character(1, 1, 0);
-		App.map = new Plane(new byte[][]{
-			{1,1,1,1,1,1,1,1,1},
-			{1,0,0,1,0,0,0,0,1},
-			{1,0,0,0,0,1,0,0,1},
-			{1,0,1,0,1,1,0,0,1},
-			{1,1,1,1,1,1,1,1,1},
-		});
+		App.map = new Plane(new byte[][] {{1, 1, 1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 1, 0, 0, 0, 0, 1},
+				{1, 0, 0, 0, 0, 1, 0, 0, 1}, {1, 0, 1, 0, 1, 1, 0, 0, 1},
+				{1, 1, 1, 1, 1, 1, 1, 1, 1},});
 		App.map.setCell(App.player, Plane.Type.ENTITY);
 	}
 
@@ -62,12 +58,13 @@ public class App {
 		}
 		App.map.setCell(character, Plane.Type.ENTITY);
 	}
-	public void processTelegramInput(String input) {
-        player.setDirection(input);
-        moveCharacter(player);
-    }
 
-    public String getMapOutput() {
-        return map.show();
-    }
+	public void processTelegramInput(String input) {
+		player.setDirection(input);
+		moveCharacter(player);
+	}
+
+	public String getMapOutput() {
+		return map.show();
+	}
 }

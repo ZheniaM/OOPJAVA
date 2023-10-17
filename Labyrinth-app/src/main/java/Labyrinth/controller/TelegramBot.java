@@ -3,7 +3,6 @@ package Labyrinth.controller;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -29,7 +28,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 		Scanner scanner;
 		String result;
 		try {
-			scanner = new Scanner(new File("tgid.txt"));
+			scanner = new Scanner(new File("resources/tgid.txt"));
 			result = scanner.nextLine();
 			scanner.close();
 		} catch (FileNotFoundException e) {
