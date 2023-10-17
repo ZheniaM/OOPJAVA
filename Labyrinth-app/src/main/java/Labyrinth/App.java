@@ -1,13 +1,27 @@
 package Labyrinth;
 
 import java.util.Scanner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+import Labyrinth.controller.TelegramBot;
 
+@SpringBootApplication
 public class App {
 	private static Scanner scanner;
 	private static Plane map;
 	private static Character player;
+	private static TelegramBot bot;
 
-	static public void main(String[] args) {
+	
+
+	static public void main(String[] args) throws TelegramApiException{
+		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+		telegramBotsApi.registerBot(new TelegramBot(null));
+		App app = new App();
+        TelegramBot bot = new TelegramBot(app);
 		initScene();
 		mainLoop();
 		scanner.close();
@@ -48,4 +62,12 @@ public class App {
 		}
 		App.map.setCell(character, Plane.Type.ENTITY);
 	}
+	public void processTelegramInput(String input) {
+        player.setDirection(input);
+        moveCharacter(player);
+    }
+
+    public String getMapOutput() {
+        return map.show();
+    }
 }
