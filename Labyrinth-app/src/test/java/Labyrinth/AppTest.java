@@ -1,8 +1,6 @@
 package Labyrinth;
 
-import static org.junit.Assert.assertEquals;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -10,25 +8,6 @@ import org.junit.Test;
  */
 public class AppTest {
 	@Test
-<<<<<<< HEAD
-	public void testDestination() {
-		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-		System.setOut(new PrintStream(outContent));
-		App.destination("f");
-		assertEquals("You went forward\r\n", outContent.toString());
-		outContent.reset();
-		App.destination("r");
-		assertEquals("You went right\r\n", outContent.toString());
-		outContent.reset();
-		App.destination("l");
-		assertEquals("You went left\r\n", outContent.toString());
-		outContent.reset();
-		App.destination("-h");
-		assertEquals(
-				"Write 'l' if you want to go left, 'r' if you want to go right or 'f' if you want to go straight.\r\n",
-				outContent.toString());
-		outContent.reset();
-=======
 	public void testTrue() {
 		Assert.assertTrue(true);
 	}
@@ -38,7 +17,6 @@ public class AppTest {
 		Point point1 = new Point(-1, 0);
 		Point point2 = new Point(0, 0);
 		Assert.assertTrue(point1.getX() == point2.getX() && point1.getY() == point2.getY());
->>>>>>> f36678b (terminal demo v0.0.0)
 	}
 
 	@Test
