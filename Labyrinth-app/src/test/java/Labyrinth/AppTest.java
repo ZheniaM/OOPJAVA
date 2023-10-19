@@ -18,10 +18,16 @@ public class AppTest {
 
 	@Test
 	public void testPlane() {
+		String expected = 
+			"<a style='font-family: monospace'>█░░</a>\n" +
+			"<a style='font-family: monospace'>░░░</a>\n" +
+			"<a style='font-family: monospace'>░█░</a>\n" +
+			"<a style='font-family: monospace'>░░P</a>\n";
 		Plane plane = new Plane(4, 3);
 		plane.setCell(new Point(0, 0), Plane.Type.WALL);
 		plane.setCell(new Point(1, 2), Plane.Type.WALL);
 		plane.setCell(new Point(2, 3), Plane.Type.ENTITY);
-		Assert.assertEquals("#  \n   \n # \n  E\n", plane.show());
+		Assert.assertEquals(expected, plane.showHTML());
+
 	}
 }

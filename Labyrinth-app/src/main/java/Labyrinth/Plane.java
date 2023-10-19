@@ -57,23 +57,24 @@ public class Plane {
 		return this.cells[y][x];
 	}
 
-	public String show() {
+	public String showHTML() {
 		StringBuilder result = new StringBuilder();
 		for (int y = 0; y < this.height; y++) {
+			result.append("<a style='font-family: monospace'>");
 			for (int x = 0; x < this.width; x++) {
 				switch (cells[y][x]) {
 					case EMPTY:
-						result.append(" ");
+						result.append("\u2591");
 						break;
 					case WALL:
-						result.append("#");
+						result.append("\u2588");
 						break;
 					case ENTITY:
-						result.append("E");
+						result.append("P");
 						break;
 				}
 			}
-			result.append("\n");
+			result.append("</a>\n");
 		}
 		return result.toString();
 	}
