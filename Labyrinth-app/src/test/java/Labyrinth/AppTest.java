@@ -23,6 +23,5 @@ public class AppTest {
 		plane.setCell(new Point(1, 2), Plane.Type.WALL);
 		plane.setCell(new Point(2, 3), Plane.Type.ENTITY);
 		Assert.assertEquals("#  \n   \n # \n  E\n", plane.show());
-
 	}
 }
