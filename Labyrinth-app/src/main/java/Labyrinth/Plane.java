@@ -78,4 +78,25 @@ public class Plane {
 		}
 		return result.toString();
 	}
+
+	public String showStr() {
+		StringBuilder result = new StringBuilder(width * (height + 1));
+		for (int y = 0; y < this.height; y++) {
+			for (int x = 0; x < this.width; x++) {
+				switch (cells[y][x]) {
+					case EMPTY:
+						result.append("\u2591");
+						break;
+					case WALL:
+						result.append("\u2588");
+						break;
+					case ENTITY:
+						result.append("P");
+						break;
+				}
+			}
+			result.append("\n");
+		}
+		return result.toString();
+	}
 }

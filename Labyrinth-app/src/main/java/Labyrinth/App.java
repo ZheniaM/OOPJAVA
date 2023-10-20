@@ -16,14 +16,16 @@ public class App {
 
 	static public void main(String[] args) throws TelegramApiException {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-		telegramBotsApi.registerBot(new TelegramBot(new App()));
+		Plane localMap = new Plane(new byte[][] {{1, 1, 1, 1, 1, 1, 1, 1, 1},
+				{1, 0, 0, 1, 0, 0, 0, 0, 1}, {1, 0, 0, 0, 0, 1, 0, 0, 1},
+				{1, 0, 1, 0, 1, 1, 0, 0, 1}, {1, 1, 1, 1, 1, 1, 1, 1, 1},});
+		Character localPlayer = new Character(1, 1, 0);
+		telegramBotsApi.registerBot(new TelegramBot(new App(localMap, localPlayer)));
 	}
 
-	public App() {
-		this.player = new Character(1, 1, 0);
-		this.map = new Plane(new byte[][] {{1, 1, 1, 1, 1, 1, 1, 1, 1}, {1, 0, 0, 1, 0, 0, 0, 0, 1},
-				{1, 0, 0, 0, 0, 1, 0, 0, 1}, {1, 0, 1, 0, 1, 1, 0, 0, 1},
-				{1, 1, 1, 1, 1, 1, 1, 1, 1},});
+	public App(Plane map, Character player) {
+		this.player = player;
+		this.map = map;
 		this.map.setCell(this.player, Plane.Type.ENTITY);
 	}
 
@@ -36,11 +38,11 @@ public class App {
 		this.map.setCell(this.player, Plane.Type.ENTITY);
 	}
 
-	public String getMapHTML(String input) {
-		if (input.equals("q") || input.equals("quit")) {
+	public String moveAndGetMapHTML(String direction) {
+		if (direction.equals("q") || direction.equals("quit")) {
 			return "game over";
 		}
-		if (this.player.setDirection(input)) {
+		if (this.player.setDirection(direction)) {
 			movePlayer();
 			return map.showHTML();
 		}
@@ -49,5 +51,14 @@ public class App {
 
 	public String getHelp() {
 		return helpMessage;
+	}
+
+	public String getMapStr() {
+		return this.map.showStr();
+	}
+
+	public void movePlayerForTestCollision(String direction) {
+		this.player.setDirection(direction);
+		movePlayer();
 	}
 }
