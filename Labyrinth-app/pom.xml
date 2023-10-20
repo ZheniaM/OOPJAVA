@@ -15,6 +15,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<java.version>8</java.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <telegrambot.starter.version>5.0.1</telegrambot.starter.version>
@@ -23,7 +24,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.1.4</version>
+    <version>2.7.14</version>
   </parent>
 
   <dependencies>
@@ -59,14 +60,13 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-  <PackageReference Include="Telegram.Bot" Version="19.0.0" />
 
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
         <plugin>
-				  <groupId>org.springframework.boot</groupId>
-				  <artifactId>spring-boot-maven-plugin</artifactId>
+		  <groupId>org.springframework.boot</groupId>
+			  <artifactId>spring-boot-maven-plugin</artifactId>
 				  <configuration>
 					  <excludes>
 						  <exclude>
@@ -114,6 +114,19 @@
         <plugin>
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.0.0</version>
+        </plugin>
+		<plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <configuration>
+            <archive>
+              <manifest>
+                <mainClass>fully.qualified.MainClass</mainClass>
+              </manifest>
+            </archive>
+            <descriptorRefs>
+              <descriptorRef>jar-with-dependencies</descriptorRef>
+              </descriptorRefs>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
