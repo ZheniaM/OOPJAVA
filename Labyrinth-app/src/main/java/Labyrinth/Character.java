@@ -51,10 +51,10 @@ public class Character extends Point {
 		this.last_x = this.x;
 		switch (this.direction) {
 			case NORTH:
-				this.y++;
+				this.y--;
 				break;
 			case SOUTH:
-				this.y--;
+				this.y++;
 				break;
 			case EAST:
 				this.x++;
