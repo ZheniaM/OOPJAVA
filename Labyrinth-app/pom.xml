@@ -85,9 +85,17 @@
 					<artifactId>maven-resources-plugin</artifactId>
 					<version>3.0.2</version>
 					<configuration>
-						<nonFilteredFileExtensions>
-							<nonFilteredFileExtension>png</nonFilteredFileExtension>
-						</nonFilteredFileExtensions>
+						<outputDirectory>target/classes</outputDirectory>
+						<resources>
+							<resource>
+								<directory>src/main/resources</directory>
+								<excludes>
+									<exclude>put_here_tgToken.txt_file</exclude>
+									<exclude>**/*.aseprite</exclude>
+									<exclude>**/WallSet.png</exclude>
+								</excludes>
+							</resource>
+						</resources>
 					</configuration>
 				</plugin>
 				<plugin>

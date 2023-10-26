@@ -1,6 +1,6 @@
 package Labyrinth;
 
-public class Character extends Point {
+public class Player extends Point {
 	private int damage;
 	private int last_x;
 	private int last_y;
@@ -10,7 +10,7 @@ public class Character extends Point {
 		NORTH, SOUTH, EAST, WEST,
 	}
 
-	public Character(int x, int y, int damage) {
+	public Player(int x, int y, int damage) {
 		super(x, y);
 		this.damage = damage < 0 ? 0 : damage;
 	}
