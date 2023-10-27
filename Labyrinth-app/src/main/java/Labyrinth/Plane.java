@@ -8,10 +8,10 @@ import java.io.ByteArrayOutputStream;
 import javax.imageio.ImageIO;
 
 public class Plane {
-	static private final int WALL = Cell.WALL.number;
 	private final int width;
 	private final int height;
 	private Cell[][] cells;
+	private Point player;
 
 	public Plane(int height, int width) {
 		if (width < 0) {
@@ -37,6 +37,11 @@ public class Plane {
 	 * @see 9 = botom left inner corner
 	 * @see 10 = upper right inner corner
 	 * @see 11 = upper left inner corner
+	 * @see 12 = right and left upper corner
+	 * @see 16 = right and left
+	 * @see 17 = right and left_inner
+	 * @see 18 = right_inner and left
+	 * @see 19 = right_inner and left_inner
 	 */
 	public Plane(int[][] map) {
 		this.height = map.length;
@@ -68,6 +73,12 @@ public class Plane {
 					this.cells[i][j] = Cell.WALL_RL;
 				} else if (map[i][j] == Cell.WALL_URL.number) {
 					this.cells[i][j] = Cell.WALL_URL;
+				} else if (map[i][j] == Cell.WALL_RLI.number) {
+					this.cells[i][j] = Cell.WALL_RLI;
+				} else if (map[i][j] == Cell.WALL_RIL.number) {
+					this.cells[i][j] = Cell.WALL_RIL;
+				} else if (map[i][j] == Cell.WALL_RILI.number) {
+					this.cells[i][j] = Cell.WALL_RILI;
 				}
 			}
 		}
@@ -145,6 +156,12 @@ public class Plane {
 						Color.BLACK, null);
 			}
 		}
+		if (cells[player.getY()][player.getX()] == Cell.FLOOR) {
+			g2d.drawImage(Cell.PLAYERONFLOOR.tile, player.getX(), player.getY(), Cell.SIZE, Cell.SIZE, Color.BLACK, null);
+		} else if (cells[player.getY()][player.getX()] == Cell.EXIT) {
+			g2d.drawImage(Cell.PLAYERONEXIT.tile, player.getX(), player.getY(), Cell.SIZE, Cell.SIZE, Color.BLACK, null);
+		}
+
 		g2d.dispose();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		try {
@@ -153,5 +170,9 @@ public class Plane {
 			e.printStackTrace();
 		}
 		return outputStream;
+	}
+
+	public void setPlayer(Point player) {
+		this.player = player;
 	}
 }

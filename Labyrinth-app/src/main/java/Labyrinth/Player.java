@@ -5,6 +5,7 @@ public class Player extends Point {
 	private int last_x;
 	private int last_y;
 	private Direction direction;
+	private Cell standsOn;
 
 	public enum Direction {
 		NORTH, SOUTH, EAST, WEST,
@@ -68,5 +69,13 @@ public class Player extends Point {
 	public void returnToPreviousPoint() {
 		this.x = this.last_x;
 		this.y = this.last_y;
+	}
+	
+	public void setStandsOnCell(Cell cell) {
+		this.standsOn = cell;
+	}
+
+	public Cell getStandsOnCell() {
+		return this.standsOn;
 	}
 }

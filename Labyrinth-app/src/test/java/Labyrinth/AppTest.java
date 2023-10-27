@@ -25,7 +25,7 @@ public class AppTest {
 		Plane plane = new Plane(4, 3);
 		plane.setCell(new Point(0, 0), Cell.WALL);
 		plane.setCell(new Point(1, 2), Cell.WALL);
-		plane.setCell(new Point(2, 3), Cell.PLAYER);
+		plane.setCell(new Point(2, 3), Cell.PLAYERONFLOOR);
 		Assert.assertEquals(expected, plane.showHTML());
 	}
 

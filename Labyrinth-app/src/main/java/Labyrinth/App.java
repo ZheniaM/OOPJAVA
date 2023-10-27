@@ -17,12 +17,12 @@ public class App {
 
 	static public void main(String[] args) throws TelegramApiException {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-		Plane localMap = new Plane(new int[][] {
-			{5, 4, 4, 12,  4, 4, 4, 4, 6},
-			{5, 0, 0, 4,  0, 0, 0, 0, 6},
-			{5, 0, 0, 0,  0, 13, 0, 0, 6},
-			{5, 0, 13, 0, 11, 12, 0, 1, 6},
-			{9, 4, 12, 4,  8, 9, 4, 4, 8},});
+		Plane localMap = new Plane(new int[][] { //
+				{5, 4, 4, 16, 4, 4, 4, 4, 6}, //
+				{5, 0, 0, 4, 0, 0, 0, 0, 6}, //
+				{5, 0, 0, 0, 0, 12, 0, 0, 6}, //
+				{5, 0, 12, 0, 11, 17, 0, 1, 6}, //
+				{9, 4, 19, 4, 8, 9, 4, 4, 8},}); //
 		Player localPlayer = new Player(1, 1, 0);
 		telegramBotsApi.registerBot(new TelegramBot(new App(localMap, localPlayer)));
 	}
@@ -30,16 +30,24 @@ public class App {
 	public App(Plane map, Player player) {
 		this.player = player;
 		this.map = map;
-		this.map.setCell(this.player, Cell.PLAYER);
+		this.map.setPlayer(this.player);
+		this.player.setStandsOnCell(this.map.getCell(this.player));
 	}
 
 	private void movePlayer() {
-		this.map.setCell(this.player, Cell.FLOOR);
+		this.map.setCell(this.player, this.player.getStandsOnCell());
 		this.player.move();
-		if (this.map.getCell(this.player).hasCollision) {
+		if (this.map.getCell(this.player).type == Cell.CellType.WALL) {
 			this.player.returnToPreviousPoint();
 		}
-		this.map.setCell(this.player, Cell.PLAYER);
+		this.player.setStandsOnCell(this.map.getCell(this.player));
+		if (this.map.getCell(this.player) == Cell.FLOOR) {
+			this.map.setCell(this.player, Cell.PLAYERONFLOOR);
+		} else if (this.map.getCell(this.player) == Cell.EXIT) {
+			this.map.setCell(this.player, Cell.PLAYERONEXIT);
+		} else {
+			this.map.setCell(this.player, Cell.EMPTY);
+		}
 	}
 
 	public String moveAndGetMapHTML(String direction) {
