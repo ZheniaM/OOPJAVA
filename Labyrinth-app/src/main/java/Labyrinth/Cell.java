@@ -71,13 +71,21 @@ public enum Cell {
 	 */
 	WALL_RILI(0b10011, "\u2588", "tiles/16px/walls/wall18.png", CellType.WALL),
 	/**
-	 * 256 player
+	 * 256 player right floor
 	 */
-	PLAYERONFLOOR(0x100, "P", "tiles/16px/player_on_floor.png", CellType.PLAYER),
+	PLAYERR_FLOOR(0x100, "P", "tiles/16px/playerR_on_floor.png", CellType.PLAYER),
 	/**
-	 * 257 player on exit
+	 * 257 player left floor
 	 */
-	PLAYERONEXIT(0x101, "P", "tiles/16px/player_on_exit.png", CellType.PLAYER);
+	PLAYERL_FLOOR(0x101, "P", "tiles/16px/playerL_on_floor.png", CellType.PLAYER),
+	/**
+	 * 258 player right exit
+	 */
+	PLAYERR_EXIT(0x102, "P", "tiles/16px/playerR_on_exit.png", CellType.PLAYER),
+	/**
+	 * 259 player left exit
+	 */
+	PLAYERL_EXIT(0x103, "P", "tiles/16px/playerL_on_exit.png", CellType.PLAYER);
 
 	public enum CellType {
 		WALL,

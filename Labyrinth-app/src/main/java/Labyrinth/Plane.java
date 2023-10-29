@@ -11,8 +11,10 @@ public class Plane {
 	private final int width;
 	private final int height;
 	private Cell[][] cells;
+	private final Point start;
 
-	public Plane(int height, int width) {
+	public Plane(int height, int width, Point start) {
+		this.start = start;
 		if (width < 0) {
 			width = 1;
 		}
@@ -42,10 +44,15 @@ public class Plane {
 	 * @see 18 = right_inner and left
 	 * @see 19 = right_inner and left_inner
 	 */
-	public Plane(int[][] map) {
+	public Plane(int[][] map, Point start) throws IllegalArgumentException {
+		if (map[start.getY()][start.getX()] != 0) {
+			throw new IllegalArgumentException("the starting position should be on the floor (it's number is 0)");
+		}
+		this.start = start;
 		this.height = map.length;
 		this.width = map[0].length;
 		this.cells = new Cell[height][width];
+		boolean hasExit = false;
 		for (int i = 0; i < this.height; i++) {
 			for (int j = 0; j < this.width; j++) {
 				if (map[i][j] == Cell.WALL.number) {
@@ -60,6 +67,7 @@ public class Plane {
 					this.cells[i][j] = Cell.FLOOR;
 				} else if (map[i][j] == Cell.EXIT.number) {
 					this.cells[i][j] = Cell.EXIT;
+					hasExit = true;
 				} else if (map[i][j] == Cell.WALL_BLI.number) {
 					this.cells[i][j] = Cell.WALL_BLI;
 				} else if (map[i][j] == Cell.WALL_BRI.number) {
@@ -78,9 +86,19 @@ public class Plane {
 					this.cells[i][j] = Cell.WALL_RIL;
 				} else if (map[i][j] == Cell.WALL_RILI.number) {
 					this.cells[i][j] = Cell.WALL_RILI;
+				} else if (map[i][j] == Cell.EMPTY.number) {
+					this.cells[i][j] = Cell.EMPTY;
 				}
 			}
 		}
+		if (!hasExit) {
+			throw new IllegalArgumentException("Map doesn't have exit tile");
+		}
+		this.cells[this.start.getY()][this.start.getX()] = Cell.PLAYERR_FLOOR;
+	}
+
+	public Point getStart() {
+		return start;
 	}
 
 	public void clear() {

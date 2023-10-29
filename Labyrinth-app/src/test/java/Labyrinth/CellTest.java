@@ -6,7 +6,7 @@ import org.junit.Test;
 public class CellTest {
 	@Test
 	public void testSymbols() {
-		Assert.assertEquals("P", Cell.PLAYERONFLOOR.symbol);
+		Assert.assertEquals("P", Cell.PLAYERR_FLOOR.symbol);
 		Assert.assertEquals("X", Cell.EXIT.symbol);
 		Assert.assertEquals("░", Cell.FLOOR.symbol);
 		Assert.assertEquals("█", Cell.WALL.symbol);

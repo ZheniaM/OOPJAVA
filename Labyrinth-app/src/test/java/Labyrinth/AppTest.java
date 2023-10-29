@@ -22,10 +22,10 @@ public class AppTest {
 				+ "<a style='font-family: monospace'>░░░</a>\n"
 				+ "<a style='font-family: monospace'>░█░</a>\n"
 				+ "<a style='font-family: monospace'>░░P</a>\n";
-		Plane plane = new Plane(4, 3);
+		Plane plane = new Plane(4, 3, new Point(2, 3));
 		plane.setCell(new Point(0, 0), Cell.WALL);
 		plane.setCell(new Point(1, 2), Cell.WALL);
-		plane.setCell(new Point(2, 3), Cell.PLAYERONFLOOR);
+		plane.setCell(new Point(2, 3), Cell.PLAYERR_FLOOR);
 		Assert.assertEquals(expected, plane.showHTML());
 	}
 
@@ -33,13 +33,14 @@ public class AppTest {
 	public void testCollision() {
 		String expectedMap = "█████\n█P░░█\n█░█░█\n█████\n";
 		Plane map = new Plane(
-				new int[][] {{7, 7, 7, 7, 7}, {7, 0, 0, 0, 7}, {7, 0, 7, 0, 7}, {7, 7, 7, 7, 7}});
+				new int[][] {{7, 7, 7, 7, 7}, {7, 0, 0, 0, 7}, {7, 0, 7, 0, 7}, {7, 7, 7, 7, 7}},
+				new Point(1, 1));
 		Player player = new Player(1, 1, 0);
 		App app = new App(map, player);
-		app.movePlayerForTestCollision("s");
-		app.movePlayerForTestCollision("e");
-		app.movePlayerForTestCollision("e");
-		app.movePlayerForTestCollision("n");
+		app.movePlayerForTestCollision("/s");
+		app.movePlayerForTestCollision("/e");
+		app.movePlayerForTestCollision("/e");
+		app.movePlayerForTestCollision("/n");
 		Assert.assertTrue(player.equals(new Point(1, 1)));
 		Assert.assertEquals(expectedMap, app.getMapStr());
 	}
