@@ -11,7 +11,6 @@ public class Plane {
 	private final int width;
 	private final int height;
 	private Cell[][] cells;
-	private Point player;
 
 	public Plane(int height, int width) {
 		if (width < 0) {
@@ -145,7 +144,7 @@ public class Plane {
 	 */
 	public ByteArrayOutputStream writeImage() {
 		BufferedImage image = new BufferedImage(this.width * Cell.SIZE, this.height * Cell.SIZE,
-		//		BufferedImage.TYPE_INT_RGB);
+				// BufferedImage.TYPE_INT_RGB);
 				Transparency.TRANSLUCENT);
 		image.setAccelerationPriority(1);
 		Graphics2D g2d = image.createGraphics();
@@ -156,11 +155,6 @@ public class Plane {
 						Color.BLACK, null);
 			}
 		}
-		if (cells[player.getY()][player.getX()] == Cell.FLOOR) {
-			g2d.drawImage(Cell.PLAYERONFLOOR.tile, player.getX(), player.getY(), Cell.SIZE, Cell.SIZE, Color.BLACK, null);
-		} else if (cells[player.getY()][player.getX()] == Cell.EXIT) {
-			g2d.drawImage(Cell.PLAYERONEXIT.tile, player.getX(), player.getY(), Cell.SIZE, Cell.SIZE, Color.BLACK, null);
-		}
 
 		g2d.dispose();
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -170,9 +164,5 @@ public class Plane {
 			e.printStackTrace();
 		}
 		return outputStream;
-	}
-
-	public void setPlayer(Point player) {
-		this.player = player;
 	}
 }

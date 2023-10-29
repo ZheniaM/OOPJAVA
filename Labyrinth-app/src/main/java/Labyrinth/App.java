@@ -19,17 +19,23 @@ public class App {
 
 	static public void main(String[] args) throws TelegramApiException {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-		int[][] localMapData1 = {{5, 4, 4, 16, 4, 4, 4, 4, 6}, {5, 0, 0, 4, 0, 0, 0, 0, 6},
-				{5, 0, 0, 0, 0, 12, 0, 0, 6}, {5, 0, 12, 0, 11, 17, 0, 1, 6},
-				{9, 4, 19, 4, 8, 9, 4, 4, 8}};
+		int[][] localMapData1 = { //
+				{5, 4, 4, 16, 4, 4, 4, 4, 6}, //
+				{5, 0, 0, 4, 0, 0, 0, 0, 6}, //
+				{5, 0, 0, 0, 0, 12, 0, 0, 6}, //
+				{5, 0, 12, 0, 11, 17, 0, 1, 6}, //
+				{9, 4, 19, 4, 8, 9, 4, 4, 8}}; //
 
-		int[][] localMapData2 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+		int[][] localMapData2 = { //
+				{5, 4, 4, 4, 6}, //
+				{5, 0, 0, 1, 6}, //
+				{9, 4, 4, 4, 8}}; //
 
 		Plane localMap1 = new Plane(localMapData1);
 		Plane localMap2 = new Plane(localMapData2);
+		Plane[] maps = {localMap2, localMap1};
 		Player localPlayer = new Player(1, 1, 0);
-		telegramBotsApi.registerBot(
-				new TelegramBot(new App(new Plane[] {localMap1, localMap2}, localPlayer)));
+		telegramBotsApi.registerBot(new TelegramBot(new App(maps, localPlayer)));
 	}
 
 	public App(Plane map, Player player) {
@@ -37,27 +43,18 @@ public class App {
 		this.player = player;
 		this.maps = new Plane[1];
 		this.maps[0] = map;
-		this.maps[0].setPlayer(this.player);
 		this.player.setStandsOnCell(this.maps[0].getCell(this.player));
 	}
 
 	public App(Plane[] maps, Player player) {
 		this.playerOnLevel = 0;
 		this.player = player;
-		this.maps = new Plane[maps.length];
-		for (int i=0; i<maps.length;i++){
-			this.maps[i]=new Plane(maps[i],player);
-		}
-		this.maps[0].setPlayer(this.player);
+		this.maps = maps;
 		this.player.setStandsOnCell(this.maps[0].getCell(this.player));
 	}
 
 	private void movePlayer() {
 		this.maps[this.playerOnLevel].setCell(this.player, this.player.getStandsOnCell());
-		// if (this.maps[this.playerOnLevel].getCell(this.player) == Cell.EXIT) {
-		// this.maps[this.playerOnLevel].setCell(this.player, this.player.getStandsOnCell());
-		// return;
-		// }
 		this.player.move();
 		if (this.maps[this.playerOnLevel].getCell(this.player).type == Cell.CellType.WALL) {
 			this.player.returnToPreviousPoint();
@@ -68,6 +65,7 @@ public class App {
 			playerChangedLevel = false;
 		} else if (this.maps[this.playerOnLevel].getCell(this.player) == Cell.EXIT) {
 			this.maps[this.playerOnLevel].setCell(this.player, Cell.PLAYERONEXIT);
+			this.playerOnLevel++;
 			playerChangedLevel = true;
 		} else {
 			this.maps[this.playerOnLevel].setCell(this.player, Cell.EMPTY);
@@ -78,9 +76,13 @@ public class App {
 	public String movePlayer(String direction) {
 		if (this.player.setDirection(direction)) {
 			movePlayer();
-			return "";
+			return "Level: " + String.valueOf(playerOnLevel);
 		}
 		return "[ERROR] incorrect input\n\n" + App.helpMessage;
+	}
+
+	public int getCurrentLevel() {
+		return this.playerOnLevel;
 	}
 
 	public boolean levelIsChanged() {
@@ -88,14 +90,17 @@ public class App {
 	}
 
 	public boolean changeLevel() {
-		this.playerOnLevel++;
-		if (this.playerOnLevel > this.maps.length) {
+		if (this.playerOnLevel == this.maps.length) {
 			return false;
 		}
-		this.player = new Player(1, 1, 0);
-		this.player.setStandsOnCell(this.maps[this.playerOnLevel].getCell(this.player));
-		this.maps[this.playerOnLevel].setPlayer(this.player);
+		if (this.playerChangedLevel) {
+			this.player = new Player(1, 1, 0);
+			this.player.setStandsOnCell(this.maps[this.playerOnLevel].getCell(this.player));
+			this.maps[this.playerOnLevel].setCell(player, Cell.PLAYERONFLOOR);
+			//this.maps[this.playerOnLevel].setPlayer(this.player);
+		}
 		return true;
+
 	}
 
 	public String moveAndGetMapHTML(String direction) {
@@ -117,8 +122,8 @@ public class App {
 		return this.maps[this.playerOnLevel].showStr();
 	}
 
-	public ByteArrayOutputStream getOutputStremForImage() {
-		return this.maps[this.playerOnLevel].writeImage();
+	public ByteArrayOutputStream getOutputStremForImage(int level) {
+		return this.maps[level].writeImage();
 	}
 
 	public void movePlayerForTestCollision(String direction) {
