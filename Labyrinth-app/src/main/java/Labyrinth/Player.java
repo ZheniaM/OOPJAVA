@@ -8,7 +8,7 @@ public class Player extends Point {
 	private Cell standsOn;
 
 	public enum Direction {
-		NORTH, SOUTH, EAST, WEST,
+		NORTH, SOUTH, EAST, WEST, RESET,
 	}
 
 	public Player(int x, int y, int damage) {
@@ -26,6 +26,10 @@ public class Player extends Point {
 
 	public boolean setDirection(String sDirection) {
 		switch (sDirection.toLowerCase()) {
+			case "r":
+			case "reset":
+				direction = Direction.RESET;
+				return true;
 			case "n":
 			case "north":
 				direction = Direction.NORTH;
@@ -63,6 +67,9 @@ public class Player extends Point {
 			case WEST:
 				this.x--;
 				break;
+			case RESET:
+				this.x = 1;
+				this.y = 1;
 		}
 	}
 
@@ -70,7 +77,7 @@ public class Player extends Point {
 		this.x = this.last_x;
 		this.y = this.last_y;
 	}
-	
+
 	public void setStandsOnCell(Cell cell) {
 		this.standsOn = cell;
 	}

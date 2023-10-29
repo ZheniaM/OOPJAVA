@@ -45,13 +45,32 @@ public class TelegramBot extends TelegramLongPollingBot {
 		if (update.hasMessage() && update.getMessage().hasText()) {
 			long chatId = update.getMessage().getChatId();
 			String input = update.getMessage().getText();
-
-			// crate text massege
-			SendMessage message = new SendMessage();
-			message.enableHtml(true);
-			message.setChatId(String.valueOf(chatId));
-			message.setText(app.moveAndGetMapHTML(input));
-			// end of text massege
+			String output = app.movePlayer(input);
+			if (app.levelIsChanged()) {
+				// create simple image
+				byte[] imageData = app.getOutputStremForImage().toByteArray();
+				SendPhoto sendPhoto = new SendPhoto();
+				String id = update.getMessage().getChatId().toString();
+				sendPhoto.setChatId(id);
+				sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(imageData), "image.png"));
+				// end of image
+				try {
+					execute(sendPhoto);
+				} catch (TelegramApiException e) {
+					e.printStackTrace();
+				}
+			}
+			if(!app.changeLevel()){
+				SendMessage message = new SendMessage();
+				message.setChatId(String.valueOf(chatId));
+				message.setText("Game Over");
+				try{
+					execute(message);
+				} catch(TelegramApiException e){
+					e.printStackTrace();
+				}
+				return;
+			}
 
 			// create simple image
 			byte[] imageData = app.getOutputStremForImage().toByteArray();
@@ -61,7 +80,6 @@ public class TelegramBot extends TelegramLongPollingBot {
 			sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(imageData), "image.png"));
 			// end of image
 			try {
-				execute(message);
 				execute(sendPhoto);
 			} catch (TelegramApiException e) {
 				e.printStackTrace();

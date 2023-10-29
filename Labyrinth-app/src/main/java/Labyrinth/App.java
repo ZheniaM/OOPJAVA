@@ -9,45 +9,93 @@ import Labyrinth.controller.TelegramBot;
 
 @SpringBootApplication
 public class App {
-	private Plane map;
+	private Plane[] maps;
 	private Player player;
+	private int playerOnLevel;
+	private boolean playerChangedLevel = false;
 
 	static private final String helpMessage =
 			"type:\n\ts or south to go South\n\tn or north to go North\n\tw or west to go West\n\te or east to go East\n\nyou can't go trouth walls (# = Wall)";
 
 	static public void main(String[] args) throws TelegramApiException {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-		Plane localMap = new Plane(new int[][] { //
-				{5, 4, 4, 16, 4, 4, 4, 4, 6}, //
-				{5, 0, 0, 4, 0, 0, 0, 0, 6}, //
-				{5, 0, 0, 0, 0, 12, 0, 0, 6}, //
-				{5, 0, 12, 0, 11, 17, 0, 1, 6}, //
-				{9, 4, 19, 4, 8, 9, 4, 4, 8},}); //
+		int[][] localMapData1 = {{5, 4, 4, 16, 4, 4, 4, 4, 6}, {5, 0, 0, 4, 0, 0, 0, 0, 6},
+				{5, 0, 0, 0, 0, 12, 0, 0, 6}, {5, 0, 12, 0, 11, 17, 0, 1, 6},
+				{9, 4, 19, 4, 8, 9, 4, 4, 8}};
+
+		int[][] localMapData2 = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
+
+		Plane localMap1 = new Plane(localMapData1);
+		Plane localMap2 = new Plane(localMapData2);
 		Player localPlayer = new Player(1, 1, 0);
-		telegramBotsApi.registerBot(new TelegramBot(new App(localMap, localPlayer)));
+		telegramBotsApi.registerBot(
+				new TelegramBot(new App(new Plane[] {localMap1, localMap2}, localPlayer)));
 	}
 
 	public App(Plane map, Player player) {
+		this.playerOnLevel = 0;
 		this.player = player;
-		this.map = map;
-		this.map.setPlayer(this.player);
-		this.player.setStandsOnCell(this.map.getCell(this.player));
+		this.maps = new Plane[1];
+		this.maps[0] = map;
+		this.maps[0].setPlayer(this.player);
+		this.player.setStandsOnCell(this.maps[0].getCell(this.player));
+	}
+
+	public App(Plane[] maps, Player player) {
+		this.playerOnLevel = 0;
+		this.player = player;
+		this.maps = new Plane[maps.length];
+		for (int i=0; i<maps.length;i++){
+			this.maps[i]=new Plane(maps[i],player);
+		}
+		this.maps[0].setPlayer(this.player);
+		this.player.setStandsOnCell(this.maps[0].getCell(this.player));
 	}
 
 	private void movePlayer() {
-		this.map.setCell(this.player, this.player.getStandsOnCell());
+		this.maps[this.playerOnLevel].setCell(this.player, this.player.getStandsOnCell());
+		// if (this.maps[this.playerOnLevel].getCell(this.player) == Cell.EXIT) {
+		// this.maps[this.playerOnLevel].setCell(this.player, this.player.getStandsOnCell());
+		// return;
+		// }
 		this.player.move();
-		if (this.map.getCell(this.player).type == Cell.CellType.WALL) {
+		if (this.maps[this.playerOnLevel].getCell(this.player).type == Cell.CellType.WALL) {
 			this.player.returnToPreviousPoint();
 		}
-		this.player.setStandsOnCell(this.map.getCell(this.player));
-		if (this.map.getCell(this.player) == Cell.FLOOR) {
-			this.map.setCell(this.player, Cell.PLAYERONFLOOR);
-		} else if (this.map.getCell(this.player) == Cell.EXIT) {
-			this.map.setCell(this.player, Cell.PLAYERONEXIT);
+		this.player.setStandsOnCell(this.maps[this.playerOnLevel].getCell(this.player));
+		if (this.maps[this.playerOnLevel].getCell(this.player) == Cell.FLOOR) {
+			this.maps[this.playerOnLevel].setCell(this.player, Cell.PLAYERONFLOOR);
+			playerChangedLevel = false;
+		} else if (this.maps[this.playerOnLevel].getCell(this.player) == Cell.EXIT) {
+			this.maps[this.playerOnLevel].setCell(this.player, Cell.PLAYERONEXIT);
+			playerChangedLevel = true;
 		} else {
-			this.map.setCell(this.player, Cell.EMPTY);
+			this.maps[this.playerOnLevel].setCell(this.player, Cell.EMPTY);
+			playerChangedLevel = false;
 		}
+	}
+
+	public String movePlayer(String direction) {
+		if (this.player.setDirection(direction)) {
+			movePlayer();
+			return "";
+		}
+		return "[ERROR] incorrect input\n\n" + App.helpMessage;
+	}
+
+	public boolean levelIsChanged() {
+		return playerChangedLevel;
+	}
+
+	public boolean changeLevel() {
+		this.playerOnLevel++;
+		if (this.playerOnLevel > this.maps.length) {
+			return false;
+		}
+		this.player = new Player(1, 1, 0);
+		this.player.setStandsOnCell(this.maps[this.playerOnLevel].getCell(this.player));
+		this.maps[this.playerOnLevel].setPlayer(this.player);
+		return true;
 	}
 
 	public String moveAndGetMapHTML(String direction) {
@@ -56,7 +104,7 @@ public class App {
 		}
 		if (this.player.setDirection(direction)) {
 			movePlayer();
-			return map.showHTML();
+			return maps[this.playerOnLevel].showHTML();
 		}
 		return "[ERROR] incorrect input\n\n" + App.helpMessage;
 	}
@@ -66,11 +114,11 @@ public class App {
 	}
 
 	public String getMapStr() {
-		return this.map.showStr();
+		return this.maps[this.playerOnLevel].showStr();
 	}
 
 	public ByteArrayOutputStream getOutputStremForImage() {
-		return this.map.writeImage();
+		return this.maps[this.playerOnLevel].writeImage();
 	}
 
 	public void movePlayerForTestCollision(String direction) {
