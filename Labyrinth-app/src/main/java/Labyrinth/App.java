@@ -154,12 +154,6 @@ public class App {
 			map.setCell(this.player,
 					(this.player.getOrientation() == Player.Direction.EAST) ? Cell.PLAYERR_FLOOR
 							: Cell.PLAYERL_FLOOR);
-			/*
-			 * if (this.player.getOrientation() == Player.Direction.EAST) {
-			 * this.maps[this.playerOnLevel].setCell(this.player, Cell.PLAYERR_FLOOR); } else {
-			 * this.maps[this.playerOnLevel].setCell(this.player, Cell.PLAYERL_FLOOR); }
-			 */
-			// this.maps[this.playerOnLevel].setPlayer(this.player);
 		}
 		return true;
 
@@ -177,12 +171,7 @@ public class App {
 		return this.maps[this.playerOnLevel].showStr();
 	}
 
-	public ByteArrayOutputStream getOutputStremForImage(int level) {
+	public ByteArrayOutputStream getOutputStreamForImage(int level) {
 		return this.maps[level].writeImage();
-	}
-
-	public void movePlayerForTestCollision(String direction) {
-		this.player.setDirection(direction);
-		movePlayer();
 	}
 }

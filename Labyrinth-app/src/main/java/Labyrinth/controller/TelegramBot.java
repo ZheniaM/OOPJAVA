@@ -61,7 +61,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 			String output = app.movePlayer(input);
 			if (app.levelIsChanged()) {
 				// create simple image
-				byte[] imageData = app.getOutputStremForImage(app.getCurrentLevel() - 1).toByteArray();
+				byte[] imageData = app.getOutputStreamForImage(app.getCurrentLevel() - 1).toByteArray();
 				SendPhoto sendPhoto = new SendPhoto();
 				sendPhoto.setChatId(chatId);
 				sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(imageData), "image.png"));
@@ -89,7 +89,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 			}
 
 			// create simple image
-			byte[] imageData = app.getOutputStremForImage(app.getCurrentLevel()).toByteArray();
+			byte[] imageData = app.getOutputStreamForImage(app.getCurrentLevel()).toByteArray();
 			SendPhoto sendPhoto = new SendPhoto();
 			sendPhoto.setChatId(chatId);
 			sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(imageData), "image.png"));

@@ -31,17 +31,46 @@ public class AppTest {
 
 	@Test
 	public void testCollision() {
-		String expectedMap = "█████\n█P░░█\n█░█░█\n█████\n";
+		String expectedMap = "█████\n█P░░█\n█░█X█\n█████\n";
 		Plane map = new Plane(
-				new int[][] {{7, 7, 7, 7, 7}, {7, 0, 0, 0, 7}, {7, 0, 7, 0, 7}, {7, 7, 7, 7, 7}},
+				new int[][] {{7, 7, 7, 7, 7}, {7, 0, 0, 0, 7}, {7, 0, 7, 1, 7}, {7, 7, 7, 7, 7}},
 				new Point(1, 1));
 		Player player = new Player(1, 1, 0);
 		App app = new App(map, player);
-		app.movePlayerForTestCollision("/s");
-		app.movePlayerForTestCollision("/e");
-		app.movePlayerForTestCollision("/e");
-		app.movePlayerForTestCollision("/n");
+		app.movePlayer("/s");
+		app.movePlayer("/e");
+		app.movePlayer("/e");
+		app.movePlayer("/n");
 		Assert.assertTrue(player.equals(new Point(1, 1)));
 		Assert.assertEquals(expectedMap, app.getMapStr());
+	}
+
+	@Test
+	public void levelChangeTest() {
+		int[][] map1Data = { //
+				{4, 4, 4, 4, 4}, //
+				{4, 0, 0, 1, 4}, //
+				{4, 4, 4, 4, 4}, //
+		};
+		Plane map1 = new Plane(map1Data, new Point(1, 1));
+		int[][] map2Data = { //
+				{4, 4, 4}, //
+				{4, 0, 4}, //
+				{4, 0, 4}, //
+				{4, 1, 4}, //
+				{4, 4, 4}, //
+		};
+		Plane map2 = new Plane(map2Data, new Point(1, 1));
+		Plane[] levels = {map1, map2};
+		Player player = new Player(map1.getStart(), 0);
+		App app = new App(levels, player);
+		app.movePlayer("/e");
+		app.movePlayer("/e");
+		Assert.assertEquals(1, app.getCurrentLevel());
+		app.changeLevel();
+		app.movePlayer("/s");
+		app.movePlayer("/s");
+		Assert.assertEquals(2, app.getCurrentLevel());
+		Assert.assertFalse(app.changeLevel());
 	}
 }
