@@ -27,11 +27,28 @@ public class Session {
 			this.chatId = id;
 			return;
 		}
-		
+
 		this.tBot = telegramBot;
 		this.chatId = id;
 		this.app = createLevels();
 		hashMap.put(id, this.app);
+	}
+
+	public void makeTurn(String input) {
+		if (isGameOver) {
+			sendText("Game over");
+			return;
+		}
+		String output = app.movePlayer(input);
+		if (app.levelIsChanged()) {
+			sendPhoto("", app.getCurrentLevel() - 1);
+			if (!app.changeLevel()) {
+				isGameOver = true;
+				sendAnimation("congrats.gif");
+				return;
+			}
+		}
+		sendPhoto(output, app.getCurrentLevel());
 	}
 
 	private App createLevels() {
@@ -43,60 +60,42 @@ public class Session {
 		Player p = new Player(maps[0].getStart(), 0);
 		return new App(maps, p);
 	}
-	
-	public void makeTurn(String input) {
-		if (isGameOver) {
-				SendMessage message = new SendMessage();
-				message.setChatId(chatId);
-				message.setText("Game Over");
-				try {
-					tBot.execute(message);
-				} catch (TelegramApiException e) {
-					e.printStackTrace();
-				}
-				return;
-			}
-			String output = app.movePlayer(input);
-			if (app.levelIsChanged()) {
-				// create simple image
-				byte[] imageData = app.getOutputStreamForImage(app.getCurrentLevel() - 1).toByteArray();
-				SendPhoto sendPhoto = new SendPhoto();
-				sendPhoto.setChatId(chatId);
-				sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(imageData), "image.png"));
-				// end of image
-				try {
-					tBot.execute(sendPhoto);
-				} catch (TelegramApiException e) {
-					e.printStackTrace();
-				}
 
-				if (!app.changeLevel()) {
-					isGameOver = true;
-					SendAnimation congrats = new SendAnimation();
-					congrats.setChatId(chatId);
-					ClassLoader classLoader = TelegramBot.class.getClassLoader();
-					File fCongrats = new File(classLoader.getResource("congrats.gif").getFile());
-					congrats.setAnimation(new InputFile(fCongrats));
-					try {
-						tBot.execute(congrats);
-					} catch (TelegramApiException e) {
-						e.printStackTrace();
-					}
-					return;
-				}
-			}
+	private void sendText(String massege) {
+		SendMessage message = new SendMessage();
+		message.setChatId(chatId);
+		message.setText(massege);
+		try {
+			tBot.execute(message);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
+	}
 
-			// create simple image
-			byte[] imageData = app.getOutputStreamForImage(app.getCurrentLevel()).toByteArray();
-			SendPhoto sendPhoto = new SendPhoto();
-			sendPhoto.setChatId(chatId);
-			sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(imageData), "image.png"));
-			sendPhoto.setCaption(output);
-			// end of image
-			try {
-				tBot.execute(sendPhoto);
-			} catch (TelegramApiException e) {
-				e.printStackTrace();
-			}
+	private void sendPhoto(String caption, int level) {
+		byte[] imageData = app.getOutputStreamForImage(level).toByteArray();
+		SendPhoto sendPhoto = new SendPhoto();
+		sendPhoto.setChatId(chatId);
+		sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(imageData), "image.png"));
+		sendPhoto.setCaption(caption);
+		// end of image
+		try {
+			tBot.execute(sendPhoto);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void sendAnimation(String fileName) {
+		SendAnimation animation = new SendAnimation();
+		animation.setChatId(chatId);
+		ClassLoader classLoader = TelegramBot.class.getClassLoader();
+		File fAnimation = new File(classLoader.getResource(fileName).getFile());
+		animation.setAnimation(new InputFile(fAnimation));
+		try {
+			tBot.execute(animation);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
 	}
 }
