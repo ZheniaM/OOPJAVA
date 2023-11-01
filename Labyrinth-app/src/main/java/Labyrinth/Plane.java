@@ -61,7 +61,7 @@ public class Plane {
 			}
 		}
 		if (!hasExit) {
-			throw new IllegalArgumentException("Map doesn't have exit.getTile()");
+			throw new IllegalArgumentException("Map doesn't have exit cell");
 		}
 		this.cells[this.start.getY()][this.start.getX()] = Cell.PLAYERR_FLOOR;
 	}
