@@ -94,14 +94,14 @@ public enum Cell {
 		PLAYER,
 		ENEMY;
 	}
-	public final BufferedImage tile;
-	public final int number;
-	public final String symbol;
-	public final CellType type;
+	private final BufferedImage tile;
+	private final int id;
+	private final String symbol;
+	private final CellType type;
 	static public final int SIZE = 32;
 
-	private Cell(int number, String symbol, String imagePath, CellType type) {
-		this.number = number;
+	private Cell(int id, String symbol, String imagePath, CellType type) {
+		this.id = id;
 		this.symbol = symbol;
 		this.type = type;
 		ClassLoader classLoader = Cell.class.getClassLoader();
@@ -113,5 +113,30 @@ public enum Cell {
 			e.printStackTrace();
 		}
 		this.tile = tile;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public BufferedImage getTile() {
+		return tile;
+	}
+
+	public String getSymbol() {
+		return symbol;
+	}
+
+	public CellType getType() {
+		return type;
+	}
+
+	static public Cell ofId(int num) throws IllegalArgumentException {
+		for (Cell c: Cell.values()){ 
+			if (c.getId() == num) {
+				return c;
+			}
+		}
+		throw new IllegalArgumentException("no such id in Cell");
 	}
 }

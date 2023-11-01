@@ -46,7 +46,7 @@ public class Plane {
 	 */
 	public Plane(int[][] map, Point start) throws IllegalArgumentException {
 		if (map[start.getY()][start.getX()] != 0) {
-			throw new IllegalArgumentException("the starting position should be on the floor (it's number is 0)");
+			throw new IllegalArgumentException("the starting position should be on the floor (it's.getId() is 0)");
 		}
 		this.start = start;
 		this.height = map.length;
@@ -55,44 +55,13 @@ public class Plane {
 		boolean hasExit = false;
 		for (int i = 0; i < this.height; i++) {
 			for (int j = 0; j < this.width; j++) {
-				if (map[i][j] == Cell.WALL.number) {
-					this.cells[i][j] = Cell.WALL;
-				} else if (map[i][j] == Cell.WALL_TB.number) {
-					this.cells[i][j] = Cell.WALL_TB;
-				} else if (map[i][j] == Cell.WALL_LEFT.number) {
-					this.cells[i][j] = Cell.WALL_LEFT;
-				} else if (map[i][j] == Cell.WALL_RIGHT.number) {
-					this.cells[i][j] = Cell.WALL_RIGHT;
-				} else if (map[i][j] == Cell.FLOOR.number) {
-					this.cells[i][j] = Cell.FLOOR;
-				} else if (map[i][j] == Cell.EXIT.number) {
-					this.cells[i][j] = Cell.EXIT;
-					hasExit = true;
-				} else if (map[i][j] == Cell.WALL_BLI.number) {
-					this.cells[i][j] = Cell.WALL_BLI;
-				} else if (map[i][j] == Cell.WALL_BRI.number) {
-					this.cells[i][j] = Cell.WALL_BRI;
-				} else if (map[i][j] == Cell.WALL_UL.number) {
-					this.cells[i][j] = Cell.WALL_UL;
-				} else if (map[i][j] == Cell.WALL_UR.number) {
-					this.cells[i][j] = Cell.WALL_UR;
-				} else if (map[i][j] == Cell.WALL_RL.number) {
-					this.cells[i][j] = Cell.WALL_RL;
-				} else if (map[i][j] == Cell.WALL_URL.number) {
-					this.cells[i][j] = Cell.WALL_URL;
-				} else if (map[i][j] == Cell.WALL_RLI.number) {
-					this.cells[i][j] = Cell.WALL_RLI;
-				} else if (map[i][j] == Cell.WALL_RIL.number) {
-					this.cells[i][j] = Cell.WALL_RIL;
-				} else if (map[i][j] == Cell.WALL_RILI.number) {
-					this.cells[i][j] = Cell.WALL_RILI;
-				} else if (map[i][j] == Cell.EMPTY.number) {
-					this.cells[i][j] = Cell.EMPTY;
-				}
+				Cell cell = Cell.ofId(map[i][j]);
+				hasExit = hasExit || (cell.getId() == Cell.EXIT.getId());
+				cells[i][j] = cell;
 			}
 		}
 		if (!hasExit) {
-			throw new IllegalArgumentException("Map doesn't have exit tile");
+			throw new IllegalArgumentException("Map doesn't have exit.getTile()");
 		}
 		this.cells[this.start.getY()][this.start.getX()] = Cell.PLAYERR_FLOOR;
 	}
@@ -138,7 +107,7 @@ public class Plane {
 		for (int y = 0; y < this.height; y++) {
 			result.append("<a style='font-family: monospace'>");
 			for (int x = 0; x < this.width; x++) {
-				result.append(cells[y][x].symbol);
+				result.append(cells[y][x].getSymbol());
 			}
 			result.append("</a>\n");
 		}
@@ -149,7 +118,7 @@ public class Plane {
 		StringBuilder result = new StringBuilder(width * (height + 1));
 		for (int y = 0; y < this.height; y++) {
 			for (int x = 0; x < this.width; x++) {
-				result.append(cells[y][x].symbol);
+				result.append(cells[y][x].getSymbol());
 			}
 			result.append("\n");
 		}
@@ -169,7 +138,7 @@ public class Plane {
 		g2d.setBackground(Color.GRAY);
 		for (int y = 0; y < this.height; y++) {
 			for (int x = 0; x < this.width; x++) {
-				g2d.drawImage(cells[y][x].tile, x * Cell.SIZE, y * Cell.SIZE, Cell.SIZE, Cell.SIZE,
+				g2d.drawImage(cells[y][x].getTile(), x * Cell.SIZE, y * Cell.SIZE, Cell.SIZE, Cell.SIZE,
 						Color.BLACK, null);
 			}
 		}

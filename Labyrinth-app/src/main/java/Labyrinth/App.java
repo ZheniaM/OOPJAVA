@@ -19,7 +19,7 @@ public class App {
 
 	static public void main(String[] args) throws Exception {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-
+		/*
 		int[][] mapData1 = { //
 				{5, 4, 4, 4, 6}, //
 				{5, 0, 0, 0, 6}, //
@@ -85,7 +85,8 @@ public class App {
 		Plane map2 = new Plane(mapData2, new Point(1, 1));
 		Plane map3 = new Plane(mapData3, new Point(26, 38));
 		Plane[] maps = {map1, map2, map3};
-		telegramBotsApi.registerBot(new TelegramBot(new App(maps, player)));
+		*/
+		telegramBotsApi.registerBot(new TelegramBot());
 	}
 
 	public App(Plane map, Player player) {
@@ -105,7 +106,7 @@ public class App {
 		Plane map = this.maps[this.playerOnLevel];
 		map.setCell(this.player, this.player.getStandsOnCell());
 		this.player.move();
-		if (this.maps[this.playerOnLevel].getCell(this.player).type == Cell.CellType.WALL) {
+		if (this.maps[this.playerOnLevel].getCell(this.player).getType() == Cell.CellType.WALL) {
 			this.player.returnToPreviousPoint();
 		}
 

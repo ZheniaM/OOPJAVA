@@ -17,12 +17,7 @@ import Labyrinth.App;
 @Component
 public class TelegramBot extends TelegramLongPollingBot {
 
-	private App app;
 	private boolean isGameOver = false;
-
-	public TelegramBot(App app) {
-		this.app = app;
-	}
 
 	@Override
 	public String getBotUsername() {
@@ -47,6 +42,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 		if (update.hasMessage() && update.getMessage().hasText()) {
 			String chatId = update.getMessage().getChatId().toString();
 			String input = update.getMessage().getText();
+			App app = Session.getApp(chatId);
 			if (isGameOver) {
 				SendMessage message = new SendMessage();
 				message.setChatId(chatId);
