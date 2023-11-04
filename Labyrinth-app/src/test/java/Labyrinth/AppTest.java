@@ -10,14 +10,14 @@ public class AppTest {
 	}
 
 	@Test
-	public void testPoint() {
+	public void testPointIsCorrectlySets() {
 		Point point1 = new Point(-1, 0);
 		Point point2 = new Point(0, 0);
 		Assert.assertTrue(point1.getX() == point2.getX() && point1.getY() == point2.getY());
 	}
 
 	@Test
-	public void testPlaneHTML() {
+	public void testPlaneHTMLIsCorrectlyShows() {
 		String expected = "<a style='font-family: monospace'>█░░</a>\n"
 				+ "<a style='font-family: monospace'>░░░</a>\n"
 				+ "<a style='font-family: monospace'>░█░</a>\n"
@@ -30,7 +30,7 @@ public class AppTest {
 	}
 
 	@Test
-	public void testCollision() {
+	public void testCollisions() {
 		String expectedMap = "█████\n█P░░█\n█░█X█\n█████\n";
 		Plane map = new Plane(
 				new int[][] {{7, 7, 7, 7, 7}, {7, 0, 0, 0, 7}, {7, 0, 7, 1, 7}, {7, 7, 7, 7, 7}},
@@ -60,17 +60,17 @@ public class AppTest {
 				{4, 1, 4}, //
 				{4, 4, 4}, //
 		};
+
 		Plane map2 = new Plane(map2Data, new Point(1, 1));
-		Plane[] levels = {map1, map2};
 		Player player = new Player(map1.getStart(), 0);
-		App app = new App(levels, player);
+		App app = new App(map1, player);
 		app.movePlayer("/e");
 		app.movePlayer("/e");
 		Assert.assertEquals(1, app.getCurrentLevel());
+		app.loadNewLevel(map2);
 		app.changeLevel();
 		app.movePlayer("/s");
 		app.movePlayer("/s");
 		Assert.assertEquals(2, app.getCurrentLevel());
-		Assert.assertFalse(app.changeLevel());
 	}
 }

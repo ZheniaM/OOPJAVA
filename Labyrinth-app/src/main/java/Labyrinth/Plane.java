@@ -5,7 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
+import org.apache.commons.io.FileUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class Plane {
 	private final int width;
@@ -64,6 +69,37 @@ public class Plane {
 			throw new IllegalArgumentException("Map doesn't have exit cell");
 		}
 		this.cells[this.start.getY()][this.start.getX()] = Cell.PLAYERR_FLOOR;
+	}
+
+	public Plane(String jsonFileName) throws IOException, IllegalArgumentException{
+		File f = new File(jsonFileName);
+		if (!f.exists()) {
+			throw new IllegalArgumentException("file %s does not exist".formatted(jsonFileName));
+		}
+		String json = FileUtils.readFileToString(f, "UTF-8");
+		JSONObject obj = new JSONObject(json);
+
+		int x = obj.getJSONArray("start").getInt(0);
+		int y = obj.getJSONArray("start").getInt(1);
+		this.start = new Point(x, y);
+		this.height = obj.getInt("height");
+		this.width = obj.getInt("width");
+		// read cells
+		this.cells = new Cell[height][width];
+		boolean hasExit = false;
+		JSONArray arr = obj.getJSONArray("cells id's");
+		for (int i = 0; i < arr.length(); i++) {
+			JSONArray line = arr.getJSONArray(i);
+			for (int j = 0; j < line.length(); j++) {
+				Cell cell = Cell.ofId(line.getInt(j));
+				hasExit = hasExit || (cell.getId() == Cell.EXIT.getId());
+				cells[i][j] = cell;
+			}
+		}
+		if (!hasExit) {
+			throw new IllegalArgumentException("Map doesn't have exit cell");
+		}
+		this.cells[y][x] = Cell.PLAYERR_FLOOR;
 	}
 
 	public Point getStart() {
