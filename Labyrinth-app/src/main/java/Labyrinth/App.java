@@ -30,6 +30,7 @@ public class App {
 	static public void main(String[] args) throws Exception {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
 		telegramBotsApi.registerBot(new TelegramBot());
+		
 	}
 
 	public App(Plane map, Player player) {
@@ -64,7 +65,7 @@ public class App {
 	public String movePlayer(String direction) {
 		if (this.player.setDirection(direction)) {
 			movePlayer();
-			return "Level: %d".formatted(playerOnLevel);
+			return String.format("Level, %d", playerOnLevel);
 		}
 		return "[ERROR] incorrect input\n\n" + App.helpMessage;
 	}

@@ -74,7 +74,7 @@ public class Session {
 
 	static public Plane loadMap(int i) throws IOException, IllegalArgumentException, Exception {
 		ClassLoader cl = Session.class.getClassLoader();
-		String name = "maps/%s".formatted(App.mapsNames[i]);
+		String name = String.format("maps/%s",(App.mapsNames[i]));
 		String json = cl.getResource(name).getFile();
 		if (json == null) {
 			throw new Exception("end of maps");

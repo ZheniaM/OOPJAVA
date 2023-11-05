@@ -74,7 +74,7 @@ public class Plane {
 	public Plane(String jsonFileName) throws IOException, IllegalArgumentException{
 		File f = new File(jsonFileName);
 		if (!f.exists()) {
-			throw new IllegalArgumentException("file %s does not exist".formatted(jsonFileName));
+			throw new IllegalArgumentException(String.format("file %s does not exist",jsonFileName));
 		}
 		String json = FileUtils.readFileToString(f, "UTF-8");
 		JSONObject obj = new JSONObject(json);
