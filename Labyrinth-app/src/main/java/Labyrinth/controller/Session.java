@@ -3,11 +3,15 @@ package Labyrinth.controller;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import Labyrinth.App;
 import Labyrinth.Plane;
@@ -33,7 +37,38 @@ public class Session {
 		hashMap.put(id, this.app);
 	}
 
+	public void sendKeyboardMessage(String chatId, String[][] keyboardArray) {
+		SendMessage message = new SendMessage();
+		message.setChatId(chatId);
+		message.setText("Here is your keyboard");
+
+		ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+		List<KeyboardRow> keyboard = new ArrayList<>();
+
+		for (String[] rowArray : keyboardArray) {
+			KeyboardRow row = new KeyboardRow();
+			for (String button : rowArray) {
+				row.add(button);
+			}
+			keyboard.add(row);
+		}
+
+		keyboardMarkup.setKeyboard(keyboard);
+		message.setReplyMarkup(keyboardMarkup);
+
+		try {
+			tBot.execute(message);
+		} catch (TelegramApiException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void makeTurn(String input) {
+		if (input.equals("Start")) {
+			this.app = createApp();
+			hashMap.put(chatId, app);
+			return;
+		}
 		if (app.isGameOver()) {
 			sendText("Game over");
 			return;
@@ -74,7 +109,7 @@ public class Session {
 
 	static public Plane loadMap(int i) throws IOException, IllegalArgumentException, Exception {
 		ClassLoader cl = Session.class.getClassLoader();
-		String name = String.format("maps/%s",(App.mapsNames[i]));
+		String name = String.format("maps/%s", (App.mapsNames[i]));
 		String json = cl.getResource(name).getFile();
 		if (json == null) {
 			throw new Exception("end of maps");
