@@ -65,7 +65,7 @@ public class App {
 	public String movePlayer(String direction) {
 		if (this.player.setDirection(direction)) {
 			movePlayer();
-			return String.format("Level, %d", playerOnLevel);
+			return String.format("Level: %d", playerOnLevel);
 		}
 		return "[ERROR] incorrect input\n\n" + App.helpMessage;
 	}

@@ -3,15 +3,12 @@ package Labyrinth.controller;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import org.apache.commons.io.FileUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import Labyrinth.App;
 import Labyrinth.Plane;
@@ -19,6 +16,19 @@ import Labyrinth.Player;
 
 public class Session {
 	static private HashMap<String, App> hashMap = new HashMap<String, App>();
+	static private final String[] adminId;
+	static {
+		ClassLoader classLoader = Session.class.getClassLoader();
+		File fileToken = new File(classLoader.getResource("premium_id's.txt").getFile());
+		String[] premiums = null;
+		try {
+			premiums = FileUtils.readFileToString(fileToken, "UTF-8").split("\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		adminId = premiums;
+
+	}
 	private TelegramBot tBot;
 	private String chatId;
 	private App app;
@@ -33,66 +43,40 @@ public class Session {
 
 		this.tBot = telegramBot;
 		this.chatId = id;
-		this.app = createApp();
-		hashMap.put(id, this.app);
-	}
-
-	public void sendKeyboardMessage(String chatId, String[][] keyboardArray) {
-		SendMessage message = new SendMessage();
-		message.setChatId(chatId);
-		message.setText("Here is your keyboard");
-
-		ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
-		List<KeyboardRow> keyboard = new ArrayList<>();
-
-		for (String[] rowArray : keyboardArray) {
-			KeyboardRow row = new KeyboardRow();
-			for (String button : rowArray) {
-				row.add(button);
-			}
-			keyboard.add(row);
-		}
-
-		keyboardMarkup.setKeyboard(keyboard);
-		message.setReplyMarkup(keyboardMarkup);
-
-		try {
-			tBot.execute(message);
-		} catch (TelegramApiException e) {
-			e.printStackTrace();
-		}
+		this.app = null;
 	}
 
 	public void makeTurn(String input) {
-		if (input.equals("Start")) {
+		if (chatId.equals(adminId[0]) && input.equals("kill bot")) {
+			System.exit(0);
+		}
+		if (this.app == null) {
+			if (!input.equals("/start")) {
+				sendText("There is no session\nType /start to start the game", KMarkup.start);
+				return;
+			}
 			this.app = createApp();
 			hashMap.put(chatId, app);
-			return;
-		}
-		if (app.isGameOver()) {
-			sendText("Game over");
+			sendPhoto("Welcome!\nLevel: 0", 0, KMarkup.map);
 			return;
 		}
 		String output = app.movePlayer(input);
 		if (app.levelIsChanged()) {
-			sendPhoto("", app.getCurrentLevel() - 1);
+			sendPhoto("", app.getCurrentLevel() - 1, null);
 			try {
 				this.app.loadNewLevel(loadMap(this.app.getCurrentLevel()));
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
-				sendText("ooops...");
-			} catch (IOException e) {
-				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
 			} finally {
 				if (!app.changeLevel()) {
-					sendAnimation("congrats.gif");
+					sendAnimation("congrats.gif", "You Win!\nType /start to play again",
+							KMarkup.start);
+					hashMap.put(chatId, null);
 					return;
 				}
 			}
 		}
-		sendPhoto(output, app.getCurrentLevel());
+		sendPhoto(output, app.getCurrentLevel(), KMarkup.map);
 	}
 
 	private App createApp() {
@@ -117,10 +101,13 @@ public class Session {
 		return new Plane(json);
 	}
 
-	private void sendText(String massege) {
+	private void sendText(String massege, KMarkup km) {
 		SendMessage message = new SendMessage();
 		message.setChatId(chatId);
 		message.setText(massege);
+		if (km != null) {
+			message.setReplyMarkup(km.getMarkup());
+		}
 		try {
 			tBot.execute(message);
 		} catch (TelegramApiException e) {
@@ -128,13 +115,15 @@ public class Session {
 		}
 	}
 
-	private void sendPhoto(String caption, int level) {
+	private void sendPhoto(String caption, int level, KMarkup km) {
 		byte[] imageData = app.getOutputStreamForImage(level).toByteArray();
 		SendPhoto sendPhoto = new SendPhoto();
 		sendPhoto.setChatId(chatId);
 		sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(imageData), "image.png"));
 		sendPhoto.setCaption(caption);
-		// end of image
+		if (km != null) {
+			sendPhoto.setReplyMarkup(km.getMarkup());
+		}
 		try {
 			tBot.execute(sendPhoto);
 		} catch (TelegramApiException e) {
@@ -142,12 +131,16 @@ public class Session {
 		}
 	}
 
-	private void sendAnimation(String fileName) {
+	private void sendAnimation(String fileName, String caption, KMarkup km) {
 		SendAnimation animation = new SendAnimation();
 		animation.setChatId(chatId);
 		ClassLoader classLoader = TelegramBot.class.getClassLoader();
 		File fAnimation = new File(classLoader.getResource(fileName).getFile());
 		animation.setAnimation(new InputFile(fAnimation));
+		animation.setCaption(caption);
+		if (km != null) {
+			animation.setReplyMarkup(km.getMarkup());
+		}
 		try {
 			tBot.execute(animation);
 		} catch (TelegramApiException e) {

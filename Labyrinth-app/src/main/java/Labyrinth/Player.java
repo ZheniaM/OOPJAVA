@@ -35,24 +35,20 @@ public class Player extends Point {
 	public boolean setDirection(String sDirection) {
 		switch (sDirection) {
 			case "n":
-			case "/n":
-			case "North":
+			case "/north":
 				this.direction = Direction.NORTH;
 				return true;
 			case "s":
-			case "/s":
-			case "South":
+			case "/south":
 				this.direction = Direction.SOUTH;
 				return true;
 			case "e":
-			case "/e":
-			case "East":
+			case "/east":
 				this.direction = Direction.EAST;
 				this.orientation = Direction.EAST;
 				return true;
 			case "w":
-			case "/w":
-			case "West":
+			case "/west":
 				this.direction = Direction.WEST;
 				this.orientation = Direction.WEST;
 				return true;
