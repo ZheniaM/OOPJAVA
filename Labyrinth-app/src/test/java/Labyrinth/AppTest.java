@@ -30,12 +30,12 @@ public class AppTest {
 	}
 
 	@Test
-	public void testCollisions() {
+	public void testCollisions() throws Exception {
 		String expectedMap = "█████\n█P░░█\n█░█X█\n█████\n";
 		Plane map = new Plane(
 				new int[][] {{7, 7, 7, 7, 7}, {7, 0, 0, 0, 7}, {7, 0, 7, 1, 7}, {7, 7, 7, 7, 7}},
 				new Point(1, 1));
-		Player player = new Player(1, 1, 0);
+		Player player = new Player(1, 1);
 		App app = new App(map, player);
 		app.movePlayer("/s");
 		app.movePlayer("/e");
@@ -46,7 +46,7 @@ public class AppTest {
 	}
 
 	@Test
-	public void levelChangeTest() {
+	public void levelChangeTest() throws Exception {
 		int[][] map1Data = { //
 				{4, 4, 4, 4, 4}, //
 				{4, 0, 0, 1, 4}, //
@@ -62,15 +62,15 @@ public class AppTest {
 		};
 
 		Plane map2 = new Plane(map2Data, new Point(1, 1));
-		Player player = new Player(map1.getStart(), 0);
+		Player player = new Player(map1.getStart());
 		App app = new App(map1, player);
-		app.movePlayer("/e");
-		app.movePlayer("/e");
+		app.movePlayer("/east");
+		app.movePlayer("/east");
 		Assert.assertEquals(1, app.getCurrentLevel());
 		app.loadNewLevel(map2);
 		app.changeLevel();
-		app.movePlayer("/s");
-		app.movePlayer("/s");
+		app.movePlayer("/south");
+		app.movePlayer("/south");
 		Assert.assertEquals(2, app.getCurrentLevel());
 	}
 }

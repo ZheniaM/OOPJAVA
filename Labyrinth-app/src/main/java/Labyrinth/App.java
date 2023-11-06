@@ -3,9 +3,12 @@ package Labyrinth;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
+import Labyrinth.Cell.CellType;
+import Labyrinth.controller.GameState;
 import Labyrinth.controller.TelegramBot;
 
 @SpringBootApplication
@@ -18,19 +21,25 @@ public class App {
 		mapsNames = a.clone();
 		numberOfLevels = mapsNames.length;
 	}
+	private GameState gameState = GameState.MAP;
+	private Enemy battleWith = null;
+	private Battlefield battlefield = null;
 	private Plane map;
 	private Player player;
 	private int playerOnLevel = 0;
 	private boolean playerChangedLevel = false;
 
-	static private final String helpMessage = "help:\n" + "\ts or south to go South\n"
-			+ "\tn or north to go North\n" + "\tw or west to go West\n" + "\te or east to go East\n"
-			+ "\n" + "you can't go trouth walls";
+	static private final String helpMessage = "help:\n" //
+			+ "\ts or south to go South\n" //
+			+ "\tn or north to go North\n" //
+			+ "\tw or west to go West\n" //
+			+ "\te or east to go East\n" //
+			+ "\n" //
+			+ "you can't go trouth walls"; //
 
 	static public void main(String[] args) throws Exception {
 		TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
 		telegramBotsApi.registerBot(new TelegramBot());
-		
 	}
 
 	public App(Plane map, Player player) {
@@ -39,7 +48,7 @@ public class App {
 		this.map = map;
 	}
 
-	private void movePlayer() {
+	private void movePlayer() throws Exception {
 		map.setCell(this.player, this.player.getStandsOnCell());
 		this.player.move();
 		if (this.map.getCell(this.player).getType() == Cell.CellType.WALL) {
@@ -48,26 +57,59 @@ public class App {
 
 		this.player.setStandsOnCell(map.getCell(this.player));
 		if (map.getCell(this.player) == Cell.FLOOR) {
-			map.setCell(this.player,
-					(this.player.getOrientation() == Player.Direction.EAST) ? Cell.PLAYERR_FLOOR
-							: Cell.PLAYERL_FLOOR);
+			map.setCell(this.player, this.player.getCell(CellType.NOTHING));
 		} else if (map.getCell(this.player) == Cell.EXIT) {
-			map.setCell(this.player,
-					(this.player.getOrientation() == Player.Direction.EAST) ? Cell.PLAYERR_EXIT
-							: Cell.PLAYERL_EXIT);
+			map.setCell(this.player, this.player.getCell(CellType.EXIT));
 			this.playerOnLevel++;
 			playerChangedLevel = true;
+		} else if (map.getCell(this.player).getType() == Cell.CellType.ENEMY) {
+			this.player.setStandsOnCell(Cell.FLOOR);
+			this.gameState = GameState.BATTLE;
+			this.battleWith = map.getEnemy(this.player);
+			if (this.battleWith == null) {
+				throw new Exception("no enemy for battle");
+			}
+			this.battlefield = new Battlefield(this.player, this.battleWith);
 		} else {
 			map.setCell(this.player, Cell.EMPTY);
 		}
 	}
 
-	public String movePlayer(String direction) {
+	public String movePlayer(String direction) throws Exception {
 		if (this.player.setDirection(direction)) {
 			movePlayer();
 			return String.format("Level: %d", playerOnLevel);
 		}
 		return "[ERROR] incorrect input\n\n" + App.helpMessage;
+	}
+
+	public void moveEnemies() {
+		List<Enemy> enemies = this.map.getEnemies();
+		for (Enemy enemy : enemies) {
+			this.map.setCell(enemy, enemy.getStandsOnCell());
+			enemy.walkRandom();
+			enemy.changeCell();
+			Cell c = this.map.getCell(enemy);
+			if (enemy.equals(this.player)) {
+				this.gameState = GameState.BATTLE;
+				this.battleWith = enemy;
+				this.battlefield = new Battlefield(this.player, this.battleWith);
+				return;
+			}
+			if (c.getType() == CellType.WALL || c.getType() == CellType.EXIT || c.getType() == CellType.ENEMY) {
+				enemy.returnToPreviousPoint();
+			}
+			this.map.setCell(enemy, enemy.getCell());
+		}
+		/*
+		 * if (this.gameState != GameState.BATTLE) { this.battleWith = null; this.gameState =
+		 * GameState.MAP; }
+		 */
+	}
+
+	public void destroyEnemy(Enemy enemy) {
+		this.map.destroyEnemy(enemy);
+		this.map.setCell(this.player, this.player.getCell(CellType.NOTHING));
 	}
 
 	public int getCurrentLevel() {
@@ -87,7 +129,7 @@ public class App {
 			this.player.goTo(map.getStart());
 			this.player.setStandsOnCell(Cell.FLOOR);
 			map.setCell(this.player,
-					(this.player.getOrientation() == Player.Direction.EAST) ? Cell.PLAYERR_FLOOR
+					(this.player.getOrientation() == Direction.EAST) ? Cell.PLAYERR_FLOOR
 							: Cell.PLAYERL_FLOOR);
 		}
 		return true;
@@ -119,5 +161,17 @@ public class App {
 
 	public boolean isGameOver() {
 		return this.playerOnLevel == App.numberOfLevels;
+	}
+
+	public GameState getGameState() {
+		return gameState;
+	}
+
+	public Battlefield getBattlefield() {
+		return battlefield;
+	}
+
+	public void setGameState(GameState gameState) {
+		this.gameState = gameState;
 	}
 }

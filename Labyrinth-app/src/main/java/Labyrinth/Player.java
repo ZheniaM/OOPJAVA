@@ -1,32 +1,32 @@
 package Labyrinth;
 
+import Labyrinth.Cell.CellType;
+
 public class Player extends Point {
-	private int damage;
+	// static public final int maxHp = 100;
+	// private int hp = 14;
 	private int last_x;
 	private int last_y;
 	private Direction direction;
 	private Cell standsOn;
 	private Direction orientation = Direction.EAST;
 
-	public enum Direction {
-		NORTH, SOUTH, EAST, WEST,
-	}
-
-	public Player(int x, int y, int damage) {
+	public Player(int x, int y) {
 		super(x, y);
-		this.damage = damage < 0 ? 0 : damage;
 		this.standsOn = Cell.FLOOR;
 	}
 
-	public Player(Point point, int damage) {
+	public Player(Point point) {
 		super(point);
-		this.damage = damage < 0 ? 0 : damage;
 		this.standsOn = Cell.FLOOR;
 	}
 
-	public int getDamage() {
-		return this.damage;
-	}
+	/*
+	 * 
+	 * public int getHp() { return this.hp; }
+	 * 
+	 * public void reduseHp(int value) { this.hp -= value; }
+	 */
 
 	public void setDirection(Direction direction) {
 		this.direction = direction;
@@ -77,8 +77,12 @@ public class Player extends Point {
 	}
 
 	public void returnToPreviousPoint() {
+		int x = this.x;
+		int y = this.y;
 		this.x = this.last_x;
 		this.y = this.last_y;
+		this.last_x = x;
+		this.last_y = y;
 	}
 
 	public void setStandsOnCell(Cell cell) {
@@ -98,5 +102,23 @@ public class Player extends Point {
 		this.last_y = this.y;
 		this.x = point.getX();
 		this.y = point.getY();
+	}
+
+	public Cell getCell(CellType cellType) {
+		if (cellType == CellType.NOTHING) {
+			if (this.orientation == Direction.EAST) {
+				return Cell.PLAYERR_FLOOR;
+			} else {
+				return Cell.PLAYERL_FLOOR;
+			}
+		} 
+		if (cellType == CellType.EXIT) {
+			if (this.orientation == Direction.EAST) {
+				return Cell.PLAYERR_EXIT;
+			} else {
+				return Cell.PLAYERL_EXIT;
+			}
+		}
+		return Cell.EMPTY;
 	}
 }

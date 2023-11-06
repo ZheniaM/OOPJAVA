@@ -93,6 +93,8 @@
 									<exclude>put_here_tgToken.txt_file</exclude>
 									<exclude>**/*.aseprite</exclude>
 									<exclude>**/WallSet.png</exclude>
+									<exclude>**/character/**/*</exclude>
+									<!--<exclude>**/tests/**/*</exclude>-->
 								</excludes>
 							</resource>
 						</resources>

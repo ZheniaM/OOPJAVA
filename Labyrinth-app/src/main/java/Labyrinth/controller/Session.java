@@ -10,7 +10,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import Labyrinth.AbilityP;
 import Labyrinth.App;
+import Labyrinth.Battlefield;
 import Labyrinth.Plane;
 import Labyrinth.Player;
 
@@ -47,36 +49,84 @@ public class Session {
 	}
 
 	public void makeTurn(String input) {
-		if (chatId.equals(adminId[0]) && input.equals("kill bot")) {
-			System.exit(0);
-		}
+		/*
+		 * if (chatId.equals(adminId[0]) && input.equals("kill bot")) { System.exit(0); }
+		 */
+
 		if (this.app == null) {
 			if (!input.equals("/start")) {
-				sendText("There is no session\nType /start to start the game", KMarkup.start);
+				sendText("There is no session\nType /start to start the game", GameState.START);
 				return;
 			}
 			this.app = createApp();
 			hashMap.put(chatId, app);
-			sendPhoto("Welcome!\nLevel: 0", 0, KMarkup.map);
+			sendPhoto("Welcome!\nLevel: 0", 0, GameState.MAP);
 			return;
 		}
-		String output = app.movePlayer(input);
-		if (app.levelIsChanged()) {
-			sendPhoto("", app.getCurrentLevel() - 1, null);
-			try {
-				this.app.loadNewLevel(loadMap(this.app.getCurrentLevel()));
-			} catch (Exception e) {
-				e.printStackTrace();
-			} finally {
-				if (!app.changeLevel()) {
-					sendAnimation("congrats.gif", "You Win!\nType /start to play again",
-							KMarkup.start);
-					hashMap.put(chatId, null);
-					return;
-				}
+
+		switch (app.getGameState()) {
+			case MAP:
+				mapState(input);
+				break;
+			case BATTLE:
+				battleState(input);
+				break;
+			case START:
+				// assert (false) : "there are no START state";
+				break;
+			default:
+				// assert (false);
+
+		}
+	}
+
+	private void mapState(String input) {
+		String output = "";
+		try {
+			output = app.movePlayer(input);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (app.getGameState() == GameState.BATTLE) {
+			sendText("Battle time!", GameState.BATTLE);
+			return;
+		}
+		if (!app.levelIsChanged()) {
+			app.moveEnemies();
+			if (app.getGameState() == GameState.BATTLE) {
+				sendText("Battle time!", GameState.BATTLE);
+				return;
+			}
+			sendPhoto(output, app.getCurrentLevel(), GameState.MAP);
+			return;
+		}
+		sendPhoto("", app.getCurrentLevel() - 1, null);
+		try {
+			this.app.loadNewLevel(loadMap(this.app.getCurrentLevel()));
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (!app.changeLevel()) {
+				sendAnimation("congrats.gif", "You Win!\nType /start to play again",
+						GameState.START);
+				hashMap.put(chatId, null);
+				return;
 			}
 		}
-		sendPhoto(output, app.getCurrentLevel(), KMarkup.map);
+		sendPhoto(output, app.getCurrentLevel(), GameState.MAP);
+	}
+
+	private void battleState(String input) {
+		Battlefield battlefield = this.app.getBattlefield();
+		battlefield.setAbility(AbilityP.PUNCH);
+		String massege = battlefield.buttle();
+		sendText(massege, null);
+		if (battlefield.isOver()) {
+			app.setGameState(GameState.MAP);
+			app.destroyEnemy(battlefield.getEnemy());
+			int curLevel = app.getCurrentLevel();
+			sendPhoto(String.format("Level: %d", curLevel), curLevel, GameState.MAP);
+		}
 	}
 
 	private App createApp() {
@@ -84,7 +134,7 @@ public class Session {
 		Player player = null;
 		try {
 			map = loadMap(0);
-			player = new Player(map.getStart(), 0);
+			player = new Player(map.getStart());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -101,12 +151,12 @@ public class Session {
 		return new Plane(json);
 	}
 
-	private void sendText(String massege, KMarkup km) {
+	private void sendText(String massege, GameState gs) {
 		SendMessage message = new SendMessage();
 		message.setChatId(chatId);
 		message.setText(massege);
-		if (km != null) {
-			message.setReplyMarkup(km.getMarkup());
+		if (gs != null) {
+			message.setReplyMarkup(gs.getMarkup());
 		}
 		try {
 			tBot.execute(message);
@@ -115,14 +165,14 @@ public class Session {
 		}
 	}
 
-	private void sendPhoto(String caption, int level, KMarkup km) {
+	private void sendPhoto(String caption, int level, GameState gs) {
 		byte[] imageData = app.getOutputStreamForImage(level).toByteArray();
 		SendPhoto sendPhoto = new SendPhoto();
 		sendPhoto.setChatId(chatId);
 		sendPhoto.setPhoto(new InputFile(new ByteArrayInputStream(imageData), "image.png"));
 		sendPhoto.setCaption(caption);
-		if (km != null) {
-			sendPhoto.setReplyMarkup(km.getMarkup());
+		if (gs != null) {
+			sendPhoto.setReplyMarkup(gs.getMarkup());
 		}
 		try {
 			tBot.execute(sendPhoto);
@@ -131,15 +181,15 @@ public class Session {
 		}
 	}
 
-	private void sendAnimation(String fileName, String caption, KMarkup km) {
+	private void sendAnimation(String fileName, String caption, GameState gs) {
 		SendAnimation animation = new SendAnimation();
 		animation.setChatId(chatId);
 		ClassLoader classLoader = TelegramBot.class.getClassLoader();
 		File fAnimation = new File(classLoader.getResource(fileName).getFile());
 		animation.setAnimation(new InputFile(fAnimation));
 		animation.setCaption(caption);
-		if (km != null) {
-			animation.setReplyMarkup(km.getMarkup());
+		if (gs != null) {
+			animation.setReplyMarkup(gs.getMarkup());
 		}
 		try {
 			tBot.execute(animation);

@@ -7,12 +7,17 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import javax.imageio.ImageIO;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Plane {
+	static private final double enemyOccupancy = 0.1; // must be in range from 0 to 1
+	private List<Enemy> enemies;
 	private final int width;
 	private final int height;
 	private Cell[][] cells;
@@ -51,7 +56,8 @@ public class Plane {
 	 */
 	public Plane(int[][] map, Point start) throws IllegalArgumentException {
 		if (map[start.getY()][start.getX()] != 0) {
-			throw new IllegalArgumentException("the starting position should be on the floor (it's.getId() is 0)");
+			throw new IllegalArgumentException(
+					"the starting position should be on the floor (it's.getId() is 0)");
 		}
 		this.start = start;
 		this.height = map.length;
@@ -71,10 +77,11 @@ public class Plane {
 		this.cells[this.start.getY()][this.start.getX()] = Cell.PLAYERR_FLOOR;
 	}
 
-	public Plane(String jsonFileName) throws IOException, IllegalArgumentException{
+	public Plane(String jsonFileName) throws IOException, IllegalArgumentException {
 		File f = new File(jsonFileName);
 		if (!f.exists()) {
-			throw new IllegalArgumentException(String.format("file %s does not exist",jsonFileName));
+			throw new IllegalArgumentException(
+					String.format("file %s does not exist", jsonFileName));
 		}
 		String json = FileUtils.readFileToString(f, "UTF-8");
 		JSONObject obj = new JSONObject(json);
@@ -84,6 +91,7 @@ public class Plane {
 		this.start = new Point(x, y);
 		this.height = obj.getInt("height");
 		this.width = obj.getInt("width");
+		List<Point> floorCells = new ArrayList<Point>();
 		// read cells
 		this.cells = new Cell[height][width];
 		boolean hasExit = false;
@@ -92,12 +100,27 @@ public class Plane {
 			JSONArray line = arr.getJSONArray(i);
 			for (int j = 0; j < line.length(); j++) {
 				Cell cell = Cell.ofId(line.getInt(j));
+				if (cell == Cell.FLOOR && !(i == y && j == x)) {
+					floorCells.add(new Point(j, i));
+				}
 				hasExit = hasExit || (cell.getId() == Cell.EXIT.getId());
 				cells[i][j] = cell;
 			}
 		}
 		if (!hasExit) {
 			throw new IllegalArgumentException("Map doesn't have exit cell");
+		}
+		int numberOfEnemies = (int) (floorCells.size() * enemyOccupancy);
+		this.enemies = new ArrayList<Enemy>();
+		Random rand = new Random();
+		while (numberOfEnemies-- != 0) {
+			int randInt = rand.nextInt(floorCells.size());
+			Point p = floorCells.get(randInt);
+			floorCells.remove(randInt);
+			Cell c = Cell.getRandomEnemy();
+			this.cells[p.getY()][p.getX()] = c;
+			Enemy enemy = new Enemy(p, 1, c);
+			this.enemies.add(enemy);
 		}
 		this.cells[y][x] = Cell.PLAYERR_FLOOR;
 	}
@@ -174,8 +197,8 @@ public class Plane {
 		g2d.setBackground(Color.GRAY);
 		for (int y = 0; y < this.height; y++) {
 			for (int x = 0; x < this.width; x++) {
-				g2d.drawImage(cells[y][x].getTile(), x * Cell.SIZE, y * Cell.SIZE, Cell.SIZE, Cell.SIZE,
-						Color.BLACK, null);
+				g2d.drawImage(cells[y][x].getTile(), x * Cell.SIZE, y * Cell.SIZE, Cell.SIZE,
+						Cell.SIZE, Color.BLACK, null);
 			}
 		}
 
@@ -187,5 +210,22 @@ public class Plane {
 			e.printStackTrace();
 		}
 		return outputStream;
+	}
+
+	public List<Enemy> getEnemies() {
+		return this.enemies;
+	}
+
+	public Enemy getEnemy(Point point) {
+		for (Enemy enemy : this.enemies) {
+			if (point.equals(enemy.getPoint())) {
+				return enemy;
+			}
+		}
+		return null;
+	}
+
+	public void destroyEnemy(Enemy enemy) {
+		this.enemies.remove(enemy);
 	}
 }

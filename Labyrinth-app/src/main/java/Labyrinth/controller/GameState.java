@@ -5,24 +5,24 @@ import java.util.List;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-public enum KMarkup {
-	map(new String[][] { //
+public enum GameState {
+	MAP(new String[][] { //
 			{"/north"}, //
 			{"/west", "/east"}, //
 			{"/south"} //
 	}), //
-	start(new String[][] { //
+	START(new String[][] { //
 			{"/start"} //
 	}), //
-	battle(new String[][] { //
+	BATTLE(new String[][] { //
 			{"/punch", "/fire_ball"}, //
 			{"/heal", "/block"}, //
-			{"/leave, /skip_turn"} //
+			{"/leave", "/skip_turn"} //
 	}); //
 
 	private final ReplyKeyboardMarkup markup;
 
-	KMarkup(String[][] names) {
+	GameState(String[][] names) {
 		this.markup = getKeyboardMarkup(names);
 	}
 
