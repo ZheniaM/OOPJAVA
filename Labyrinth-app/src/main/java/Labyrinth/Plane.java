@@ -14,6 +14,11 @@ import javax.imageio.ImageIO;
 import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import Labyrinth.enemy.Bat;
+import Labyrinth.enemy.Enemy;
+import Labyrinth.enemy.EnemyType;
+import Labyrinth.enemy.ErrorEnemy;
+import Labyrinth.enemy.Goo;
 
 public class Plane {
 	static private final double enemyOccupancy = 0.1; // must be in range from 0 to 1
@@ -100,7 +105,7 @@ public class Plane {
 			JSONArray line = arr.getJSONArray(i);
 			for (int j = 0; j < line.length(); j++) {
 				Cell cell = Cell.ofId(line.getInt(j));
-				if (cell == Cell.FLOOR && !(i == y && j == x)) {
+				if (cell == Cell.FLOOR && (i != y || j != x)) {
 					floorCells.add(new Point(j, i));
 				}
 				hasExit = hasExit || (cell.getId() == Cell.EXIT.getId());
@@ -117,9 +122,19 @@ public class Plane {
 			int randInt = rand.nextInt(floorCells.size());
 			Point p = floorCells.get(randInt);
 			floorCells.remove(randInt);
-			Cell c = Cell.getRandomEnemy();
-			this.cells[p.getY()][p.getX()] = c;
-			Enemy enemy = new Enemy(p, 1, c);
+			Enemy enemy = null;
+			switch (EnemyType.getRandom()) {
+				case BAT:
+					enemy = new Bat(p, 1);
+					break;
+				case GOO:
+					enemy = new Goo(p, 1);
+					break;
+				default:
+					enemy = new ErrorEnemy(p, 1);
+					break;
+			}
+			this.cells[p.getY()][p.getX()] = enemy.getCell();
 			this.enemies.add(enemy);
 		}
 		this.cells[y][x] = Cell.PLAYERR_FLOOR;

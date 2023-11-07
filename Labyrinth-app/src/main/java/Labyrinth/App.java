@@ -10,6 +10,7 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import Labyrinth.Cell.CellType;
 import Labyrinth.controller.GameState;
 import Labyrinth.controller.TelegramBot;
+import Labyrinth.enemy.Enemy;
 
 @SpringBootApplication
 public class App {
@@ -28,6 +29,8 @@ public class App {
 	private Player player;
 	private int playerOnLevel = 0;
 	private boolean playerChangedLevel = false;
+	private int enemiesDefeated;
+	private int totalBattles;
 
 	static private final String helpMessage = "help:\n" //
 			+ "\ts or south to go South\n" //
@@ -46,6 +49,8 @@ public class App {
 		this.playerOnLevel = 0;
 		this.player = player;
 		this.map = map;
+		this.enemiesDefeated = 0;
+		this.totalBattles = 0;
 	}
 
 	private void movePlayer() throws Exception {
@@ -86,20 +91,21 @@ public class App {
 	public void moveEnemies() {
 		List<Enemy> enemies = this.map.getEnemies();
 		for (Enemy enemy : enemies) {
-			this.map.setCell(enemy, enemy.getStandsOnCell());
+			this.map.setCell(enemy.getPoint(), enemy.getStandsOnCell());
 			enemy.walkRandom();
 			enemy.changeCell();
-			Cell c = this.map.getCell(enemy);
-			if (enemy.equals(this.player)) {
+			Cell c = this.map.getCell(enemy.getPoint());
+			if (enemy.getPoint().equals(this.player)) {
 				this.gameState = GameState.BATTLE;
 				this.battleWith = enemy;
 				this.battlefield = new Battlefield(this.player, this.battleWith);
 				return;
 			}
-			if (c.getType() == CellType.WALL || c.getType() == CellType.EXIT || c.getType() == CellType.ENEMY) {
+			if (c.getType() == CellType.WALL || c.getType() == CellType.EXIT
+					|| c.getType() == CellType.ENEMY) {
 				enemy.returnToPreviousPoint();
 			}
-			this.map.setCell(enemy, enemy.getCell());
+			this.map.setCell(enemy.getPoint(), enemy.getCell());
 		}
 		/*
 		 * if (this.gameState != GameState.BATTLE) { this.battleWith = null; this.gameState =
@@ -107,9 +113,13 @@ public class App {
 		 */
 	}
 
-	public void destroyEnemy(Enemy enemy) {
+	public void destroyEnemy(Enemy enemy, boolean winner) {
 		this.map.destroyEnemy(enemy);
 		this.map.setCell(this.player, this.player.getCell(CellType.NOTHING));
+		this.totalBattles++;
+		if (winner) {
+			this.enemiesDefeated++;
+		}
 	}
 
 	public int getCurrentLevel() {
@@ -173,5 +183,13 @@ public class App {
 
 	public void setGameState(GameState gameState) {
 		this.gameState = gameState;
+	}
+
+	public int getEnemiesDefeated() {
+		return this.enemiesDefeated;
+	}
+
+	public int getTotalBattles() {
+		return totalBattles;
 	}
 }

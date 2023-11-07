@@ -1,5 +1,7 @@
 package Labyrinth;
 
+import Labyrinth.enemy.Enemy;
+
 public class Battlefield {
 	private Player player;
 	private Enemy enemy;
@@ -19,7 +21,7 @@ public class Battlefield {
 	/**
 	 * stud
 	 */
-	public String buttle() {
+	public String battle() {
 		return "in developing";
 	}
 
@@ -29,5 +31,13 @@ public class Battlefield {
 
 	public Enemy getEnemy() {
 		return this.enemy;
+	}
+
+	/**
+	 * true - player win.
+	 * false - enemy win
+	 */
+	public boolean winner() {
+		return true;
 	}
 }

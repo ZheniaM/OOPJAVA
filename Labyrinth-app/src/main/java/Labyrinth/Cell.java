@@ -90,17 +90,33 @@ public enum Cell {
 	 */
 	PLAYERL_EXIT(0x103, "P", "tiles/16px/player/playerL_on_exit.png", CellType.PLAYER),
 	/**
-	 * 512 bat_1
+	 * 512 error enemy
 	 */
-	BAT1(0x200, "E", "tiles/16px/enemies/bat1.png", CellType.ENEMY),
+	ENEMY_ERROR(0x200, "E", "tiles/16px/enemies/error.png", CellType.ENEMY),
 	/**
-	 * 513 bat_2
+	 * 513 bat_1
 	 */
-	BAT2(0x201, "E", "tiles/16px/enemies/bat2.png", CellType.ENEMY),
+	BAT1(0x201, "E", "tiles/16px/enemies/bat1.png", CellType.ENEMY),
 	/**
-	 * 514 bat_3
+	 * 514 bat_2
 	 */
-	BAT3(0x202, "E", "tiles/16px/enemies/bat3.png", CellType.ENEMY);
+	BAT2(0x202, "E", "tiles/16px/enemies/bat2.png", CellType.ENEMY),
+	/**
+	 * 515 bat_3
+	 */
+	BAT3(0x203, "E", "tiles/16px/enemies/bat3.png", CellType.ENEMY),
+	/**
+	 * 516 goo_1
+	 */
+	GOO1(0x204, "E", "tiles/16px/enemies/goo1.png", CellType.ENEMY),
+	/**
+	 * 517 goo_2
+	 */
+	GOO2(0x205, "E", "tiles/16px/enemies/goo2.png", CellType.ENEMY),
+	/**
+	 * 518 goo_3
+	 */
+	GOO3(0x206, "E", "tiles/16px/enemies/goo3.png", CellType.ENEMY);
 
 	public enum CellType {
 		WALL,

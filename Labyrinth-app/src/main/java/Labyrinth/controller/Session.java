@@ -4,7 +4,6 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import org.apache.commons.io.FileUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -18,19 +17,6 @@ import Labyrinth.Player;
 
 public class Session {
 	static private HashMap<String, App> hashMap = new HashMap<String, App>();
-	static private final String[] adminId;
-	static {
-		ClassLoader classLoader = Session.class.getClassLoader();
-		File fileToken = new File(classLoader.getResource("premium_id's.txt").getFile());
-		String[] premiums = null;
-		try {
-			premiums = FileUtils.readFileToString(fileToken, "UTF-8").split("\n");
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		adminId = premiums;
-
-	}
 	private TelegramBot tBot;
 	private String chatId;
 	private App app;
@@ -49,10 +35,6 @@ public class Session {
 	}
 
 	public void makeTurn(String input) {
-		/*
-		 * if (chatId.equals(adminId[0]) && input.equals("kill bot")) { System.exit(0); }
-		 */
-
 		if (this.app == null) {
 			if (!input.equals("/start")) {
 				sendText("There is no session\nType /start to start the game", GameState.START);
@@ -107,8 +89,14 @@ public class Session {
 			e.printStackTrace();
 		} finally {
 			if (!app.changeLevel()) {
-				sendAnimation("congrats.gif", "You Win!\nType /start to play again",
-						GameState.START);
+				String massege = String.format("You win!\n" //
+						+ "Score:\n" //
+						+ "\ttotal battles: %d\n" //
+						+ "\tbattle wins: %d\n" //
+						+ "\n" //
+						+ "Type /start to play again", //
+						app.getTotalBattles(), app.getEnemiesDefeated()); //
+				sendAnimation("congrats.gif", massege, GameState.START);
 				hashMap.put(chatId, null);
 				return;
 			}
@@ -119,13 +107,14 @@ public class Session {
 	private void battleState(String input) {
 		Battlefield battlefield = this.app.getBattlefield();
 		battlefield.setAbility(AbilityP.PUNCH);
-		String massege = battlefield.buttle();
+		String massege = battlefield.battle();
 		sendText(massege, null);
 		if (battlefield.isOver()) {
 			app.setGameState(GameState.MAP);
-			app.destroyEnemy(battlefield.getEnemy());
+			app.destroyEnemy(battlefield.getEnemy(), battlefield.winner());
 			int curLevel = app.getCurrentLevel();
-			sendPhoto(String.format("Level: %d", curLevel), curLevel, GameState.MAP);
+			sendPhoto(String.format("Enemies defeated: %d\nLevel: %d", app.getEnemiesDefeated(),
+					curLevel), curLevel, GameState.MAP);
 		}
 	}
 
