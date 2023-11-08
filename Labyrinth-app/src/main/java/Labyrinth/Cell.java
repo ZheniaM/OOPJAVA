@@ -1,12 +1,9 @@
 package Labyrinth;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javax.imageio.ImageIO;
 
 public enum Cell {
 	/**
@@ -136,14 +133,16 @@ public enum Cell {
 		this.id = id;
 		this.symbol = symbol;
 		this.type = type;
-		ClassLoader classLoader = Cell.class.getClassLoader();
-		BufferedImage tile = null;
+		//ClassLoader classLoader = Cell.class.getClassLoader();
+		BufferedImage tile = new ReaderFromResoucre(imagePath).getBufferedImage();
+		/*
 		try {
 			File file = new File(classLoader.getResource(imagePath).getFile());
 			tile = ImageIO.read(file);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		*/
 		this.tile = tile;
 	}
 

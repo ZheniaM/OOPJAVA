@@ -1,1 +1,1 @@
-mvn exec:java
+java -jar .\target\Labyrinth-app-v0.4.0.jar

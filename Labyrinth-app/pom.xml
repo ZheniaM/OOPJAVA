@@ -7,7 +7,7 @@
 
 	<groupId>Labyrinth</groupId>
 	<artifactId>Labyrinth-app</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>v0.4.0</version>
 
 	<name>Labyrinth-app</name>
 
@@ -19,37 +19,11 @@
 		<telegrambot.starter.version>5.1.1</telegrambot.starter.version>
 	</properties>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.7.14</version>
-	</parent>
-
 	<dependencies>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-			<optional>true</optional>
-		</dependency>
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<optional>true</optional>
-		</dependency>
 		<dependency>
 			<groupId>org.telegram</groupId>
 			<artifactId>telegrambots</artifactId>
 			<version>5.1.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.telegram</groupId>
-			<artifactId>telegrambots-spring-boot-starter</artifactId>
-			<version>${telegrambot.starter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -57,23 +31,21 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>2.0.9</version>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<pluginManagement>			<!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
 			<plugins>
-				<plugin>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-maven-plugin</artifactId>
-					<configuration>
-						<excludes>
-							<exclude>
-								<groupId>org.projectlombok</groupId>
-								<artifactId>lombok</artifactId>
-							</exclude>
-						</excludes>
-					</configuration>
-				</plugin>
 				<!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
 				<plugin>
 					<artifactId>maven-clean-plugin</artifactId>
@@ -94,6 +66,7 @@
 									<exclude>**/*.aseprite</exclude>
 									<exclude>**/WallSet.png</exclude>
 									<exclude>**/character/**/*</exclude>
+									<exclude>**/64px/**/*</exclude>
 									<!--<exclude>**/tests/**/*</exclude>-->
 								</excludes>
 							</resource>
@@ -129,21 +102,20 @@
 					<artifactId>maven-project-info-reports-plugin</artifactId>
 					<version>3.0.0</version>
 				</plugin>
-				<!--
 				<plugin>
 					<artifactId>maven-assembly-plugin</artifactId>
 					<configuration>
 						<archive>
 							<manifest>
-								<mainClass>fully.qualified.MainClass</mainClass>
+								<mainClass>Labyrinth.App</mainClass>
 							</manifest>
 						</archive>
 						<descriptorRefs>
 							<descriptorRef>jar-with-dependencies</descriptorRef>
 						</descriptorRefs>
+						<appendAssemblyId>false</appendAssemblyId>
 					</configuration>
 				</plugin>
-				-->
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>exec-maven-plugin</artifactId>

@@ -5,13 +5,11 @@ import java.awt.Graphics2D;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import javax.imageio.ImageIO;
-import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import Labyrinth.enemy.Bat;
@@ -83,15 +81,13 @@ public class Plane {
 		this.cells[this.start.getY()][this.start.getX()] = Cell.PLAYERR_FLOOR;
 	}
 
-	public Plane(String jsonFileName) throws IOException, IllegalArgumentException {
-		File f = new File(jsonFileName);
-		if (!f.exists()) {
-			throw new IllegalArgumentException(
-					String.format("file %s does not exist", jsonFileName));
+	public Plane(String jsonFileName) throws NoMoreLevelException, IllegalArgumentException {
+		JSONObject obj = null;
+		try {
+			obj = new ReaderFromResoucre(jsonFileName).getJsonObject();
+		} catch (IOException e) {
+			throw new NoMoreLevelException();
 		}
-		String json = FileUtils.readFileToString(f, "UTF-8");
-		JSONObject obj = new JSONObject(json);
-
 		int x = obj.getJSONArray("start").getInt(0);
 		int y = obj.getJSONArray("start").getInt(1);
 		this.start = new Point(x, y);
