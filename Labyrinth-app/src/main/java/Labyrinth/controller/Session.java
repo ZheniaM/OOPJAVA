@@ -1,8 +1,6 @@
 package Labyrinth.controller;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import org.telegram.telegrambots.meta.api.methods.send.SendAnimation;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -12,8 +10,10 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import Labyrinth.AbilityP;
 import Labyrinth.App;
 import Labyrinth.Battlefield;
+import Labyrinth.NoMoreLevelException;
 import Labyrinth.Plane;
 import Labyrinth.Player;
+import Labyrinth.ReaderFromResoucre;
 
 public class Session {
 	static private HashMap<String, App> hashMap = new HashMap<String, App>();
@@ -85,22 +85,28 @@ public class Session {
 		sendPhoto("", app.getCurrentLevel() - 1, null);
 		try {
 			this.app.loadNewLevel(loadMap(this.app.getCurrentLevel()));
+			app.changeLevel();
+		} catch (NoMoreLevelException e) {
+			String massege = String.format("You win!\n" //
+					+ "Score:\n" //
+					+ "\ttotal battles: %d\n" //
+					+ "\tbattle wins: %d\n" //
+					+ "\n" //
+					+ "Type /start to play again", //
+					app.getTotalBattles(), app.getEnemiesDefeated()); //
+			sendAnimation("congrats.gif", massege, GameState.START);
+			hashMap.put(chatId, null);
+			return;
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (!app.changeLevel()) {
-				String massege = String.format("You win!\n" //
-						+ "Score:\n" //
-						+ "\ttotal battles: %d\n" //
-						+ "\tbattle wins: %d\n" //
-						+ "\n" //
-						+ "Type /start to play again", //
-						app.getTotalBattles(), app.getEnemiesDefeated()); //
-				sendAnimation("congrats.gif", massege, GameState.START);
-				hashMap.put(chatId, null);
-				return;
-			}
 		}
+		/*
+		 * finally { if (!app.changeLevel()) { String massege = String.format("You win!\n" // +
+		 * "Score:\n" // + "\ttotal battles: %d\n" // + "\tbattle wins: %d\n" // + "\n" // +
+		 * "Type /start to play again", // app.getTotalBattles(), app.getEnemiesDefeated()); //
+		 * sendAnimation("congrats.gif", massege, GameState.START); hashMap.put(chatId, null);
+		 * return; } }
+		 */
 		sendPhoto(output, app.getCurrentLevel(), GameState.MAP);
 	}
 
@@ -130,14 +136,9 @@ public class Session {
 		return new App(map, player);
 	}
 
-	static public Plane loadMap(int i) throws IOException, IllegalArgumentException, Exception {
-		ClassLoader cl = Session.class.getClassLoader();
-		String name = String.format("maps/%s", (App.mapsNames[i]));
-		String json = cl.getResource(name).getFile();
-		if (json == null) {
-			throw new Exception("end of maps");
-		}
-		return new Plane(json);
+	static public Plane loadMap(int i) throws NoMoreLevelException, IllegalArgumentException {
+		String name = String.format("maps/%d.json", i);
+		return new Plane(name);
 	}
 
 	private void sendText(String massege, GameState gs) {
@@ -173,9 +174,12 @@ public class Session {
 	private void sendAnimation(String fileName, String caption, GameState gs) {
 		SendAnimation animation = new SendAnimation();
 		animation.setChatId(chatId);
-		ClassLoader classLoader = TelegramBot.class.getClassLoader();
-		File fAnimation = new File(classLoader.getResource(fileName).getFile());
-		animation.setAnimation(new InputFile(fAnimation));
+		animation.setAnimation(new ReaderFromResoucre(fileName).getAnimation());
+		/*
+		 * ClassLoader classLoader = TelegramBot.class.getClassLoader(); File fAnimation = new
+		 * File(classLoader.getResource(fileName).getFile()); animation.setAnimation(new
+		 * InputFile(fAnimation));
+		 */
 		animation.setCaption(caption);
 		if (gs != null) {
 			animation.setReplyMarkup(gs.getMarkup());

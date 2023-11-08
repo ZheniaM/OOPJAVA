@@ -20,8 +20,7 @@ public class EnemyTest {
 
 	@Test
 	public void testCollisionIsWorking() throws Exception {
-		ClassLoader cl = EnemyTest.class.getClassLoader();
-		Plane plane = new Plane(cl.getResource("tests/testmap.json").getFile());
+		Plane plane = new Plane("tests/testmap.json");
 		Player player = new Player(plane.getStart());
 		App app = new App(plane, player);
 		for (int i = 0; i < 100; i++) {

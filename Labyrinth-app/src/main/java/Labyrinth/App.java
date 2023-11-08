@@ -1,10 +1,7 @@
 package Labyrinth;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.Arrays;
 import java.util.List;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import Labyrinth.Cell.CellType;
@@ -12,16 +9,15 @@ import Labyrinth.controller.GameState;
 import Labyrinth.controller.TelegramBot;
 import Labyrinth.enemy.Enemy;
 
-@SpringBootApplication
 public class App {
-	static public final String[] mapsNames;
+	/*
+	static public final List<String> mapsNames;
 	static public final int numberOfLevels;
 	static {
-		String[] a = new File(App.class.getClassLoader().getResource("maps/").getFile()).list();
-		Arrays.sort(a);
-		mapsNames = a.clone();
-		numberOfLevels = mapsNames.length;
+		mapsNames = new ReaderFromResoucre("maps/").getNames();
+		numberOfLevels = mapsNames.size();
 	}
+	*/
 	private GameState gameState = GameState.MAP;
 	private Enemy battleWith = null;
 	private Battlefield battlefield = null;
@@ -131,9 +127,11 @@ public class App {
 	}
 
 	public boolean changeLevel() {
+		/*
 		if (isGameOver()) {
 			return false;
 		}
+		*/
 		if (this.playerChangedLevel) {
 			this.playerChangedLevel = false;
 			this.player.goTo(map.getStart());
@@ -146,9 +144,11 @@ public class App {
 	}
 
 	public boolean loadNewLevel(Plane level) {
+		/*
 		if (isGameOver()) {
 			return false;
 		}
+		*/
 		this.map = level;
 		return true;
 	}
@@ -169,9 +169,11 @@ public class App {
 		return this.map.writeImage();
 	}
 
+	/*
 	public boolean isGameOver() {
 		return this.playerOnLevel == App.numberOfLevels;
 	}
+	*/
 
 	public GameState getGameState() {
 		return gameState;
