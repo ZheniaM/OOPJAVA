@@ -21,4 +21,8 @@ public interface Enemy {
 	public abstract void changeCell();
 
 	public abstract Cell getRandomCell();
+
+	public int getHp();
+
+	public void reduseHp(int value);
 }

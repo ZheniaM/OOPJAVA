@@ -106,7 +106,7 @@ public class Session {
 
 	private void battleState(String input) {
 		Battlefield battlefield = this.app.getBattlefield();
-		battlefield.setAbility(AbilityP.PUNCH);
+		battlefield.setAbility(AbilityP.getAbility(input));
 		String massege = battlefield.battle();
 		sendText(massege, null);
 		if (battlefield.isOver()) {

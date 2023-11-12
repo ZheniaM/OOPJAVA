@@ -22,11 +22,44 @@ public class Battlefield {
 	 * stud
 	 */
 	public String battle() {
-		return "in developing";
+		String message = "";
+		switch (abilityP) {
+			case HEAL:
+				this.player.reduseHp(abilityP.getDamage());
+				message += "You heal yourself";
+				break;
+			case SKIP_TURN:
+			case BLOCK:
+				message += "Player does not respond";
+				break;
+			default:
+				this.enemy.reduseHp(abilityP.getDamage());
+				message += "You deal " + abilityP.getDamage() + " damage";
+				break;
+		}
+		switch (abilityE) {
+			case HEAL:
+				this.enemy.reduseHp(abilityE.getDamage());
+				message += ", Enemy heals itself";
+				break;
+			case SKIP_TURN:
+			case BLOCK:
+				message += ", Enemy does not respond";
+				break;
+			default:
+				this.player.reduseHp(abilityE.getDamage());
+				message += ", Enemy deal " + abilityE.getDamage() + " damage";
+				break;
+		}
+		return message;
 	}
 
 	public boolean isOver() {
-		return true;
+		if (this.player.getHp() <= 0 || this.enemy.getHp() <= 0) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public Enemy getEnemy() {
@@ -34,10 +67,13 @@ public class Battlefield {
 	}
 
 	/**
-	 * true - player win.
-	 * false - enemy win
+	 * true - player win. false - enemy win
 	 */
 	public boolean winner() {
-		return true;
+		if (this.player.getHp() == 0) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 }

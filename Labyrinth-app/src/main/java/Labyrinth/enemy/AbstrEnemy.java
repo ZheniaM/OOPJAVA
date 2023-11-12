@@ -4,7 +4,7 @@ import Labyrinth.Cell;
 import Labyrinth.Direction;
 import Labyrinth.Point;
 
-public abstract class AbstrEnemy extends Point implements Enemy{
+public abstract class AbstrEnemy extends Point implements Enemy {
 	protected int hp;
 	private int last_x;
 	private int last_y;
@@ -66,5 +66,13 @@ public abstract class AbstrEnemy extends Point implements Enemy{
 
 	public EnemyType getType() {
 		return type;
+	}
+
+	public int getHp() {
+		return this.hp;
+	}
+
+	public void reduseHp(int value) {
+		this.hp -= value;
 	}
 }

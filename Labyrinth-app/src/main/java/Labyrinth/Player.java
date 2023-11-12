@@ -4,7 +4,7 @@ import Labyrinth.Cell.CellType;
 
 public class Player extends Point {
 	// static public final int maxHp = 100;
-	// private int hp = 14;
+	private int hp = 14;
 	private int last_x;
 	private int last_y;
 	private Direction direction;
@@ -21,12 +21,13 @@ public class Player extends Point {
 		this.standsOn = Cell.FLOOR;
 	}
 
-	/*
-	 * 
-	 * public int getHp() { return this.hp; }
-	 * 
-	 * public void reduseHp(int value) { this.hp -= value; }
-	 */
+	public int getHp() {
+		return this.hp;
+	}
+
+	public void reduseHp(int value) {
+		this.hp -= value;
+	}
 
 	public void setDirection(Direction direction) {
 		this.direction = direction;
@@ -111,7 +112,7 @@ public class Player extends Point {
 			} else {
 				return Cell.PLAYERL_FLOOR;
 			}
-		} 
+		}
 		if (cellType == CellType.EXIT) {
 			if (this.orientation == Direction.EAST) {
 				return Cell.PLAYERR_EXIT;
