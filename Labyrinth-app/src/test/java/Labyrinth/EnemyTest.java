@@ -10,7 +10,7 @@ import Labyrinth.Cell.CellType;
 public class EnemyTest {
 	@Test
 	public void testAnimation() {
-		Enemy enemy = new Bat(new Point(0, 0), 1);
+		Enemy enemy = new Bat(new Point(0, 0), 1, 0);
 		Assert.assertTrue(new Point(0, 0).equals(enemy.getPoint()));
 		Cell c = enemy.getCell();
 		Assert.assertEquals(c, enemy.getCell());

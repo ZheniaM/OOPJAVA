@@ -25,7 +25,7 @@ public class Battlefield {
 		String message = "";
 		switch (abilityP) {
 			case HEAL:
-				this.player.reduseHp(abilityP.getDamage());
+				this.player.reduseHp(-(abilityP.getDamage() + player.getLVL()));
 				message += "You heal yourself";
 				break;
 			case SKIP_TURN:
@@ -33,13 +33,13 @@ public class Battlefield {
 				message += "Player does not respond";
 				break;
 			default:
-				this.enemy.reduseHp(abilityP.getDamage());
-				message += "You deal " + abilityP.getDamage() + " damage";
+				this.enemy.reduseHp(abilityP.getDamage() + player.getLVL());
+				message += "You deal " + (abilityP.getDamage() + player.getLVL()) + " damage";
 				break;
 		}
 		switch (abilityE) {
 			case HEAL:
-				this.enemy.reduseHp(abilityE.getDamage());
+				this.enemy.reduseHp(abilityE.getDamage() + enemy.getLVL()/12);
 				message += ", Enemy heals itself";
 				break;
 			case SKIP_TURN:
@@ -47,8 +47,8 @@ public class Battlefield {
 				message += ", Enemy does not respond";
 				break;
 			default:
-				this.player.reduseHp(abilityE.getDamage());
-				message += ", Enemy deal " + abilityE.getDamage() + " damage";
+				this.player.reduseHp(abilityE.getDamage() + enemy.getLVL());
+				message += ", Enemy deal " + (abilityE.getDamage() + enemy.getLVL()/12) + " damage";
 				break;
 		}
 		return message;
@@ -70,9 +70,11 @@ public class Battlefield {
 	 * true - player win. false - enemy win
 	 */
 	public boolean winner() {
-		if (this.player.getHp() == 0) {
+		if (this.player.getHp() <= 0) {
 			return false;
 		} else {
+			this.player.increseXp(enemy.getLVL());
+			this.player.increseHp(this.player.getLVL());
 			return true;
 		}
 	}

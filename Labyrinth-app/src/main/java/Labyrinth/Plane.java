@@ -22,6 +22,7 @@ import Labyrinth.enemy.Goo;
 
 public class Plane {
 	static private final double enemyOccupancy = 0.1; // must be in range from 0 to 1
+	public static int numberOfEnemiesonLVL;
 	private List<Enemy> enemies;
 	private final int width;
 	private final int height;
@@ -116,6 +117,7 @@ public class Plane {
 			throw new IllegalArgumentException("Map doesn't have exit cell");
 		}
 		int numberOfEnemies = (int) (floorCells.size() * enemyOccupancy);
+		Plane.numberOfEnemiesonLVL=numberOfEnemies;
 		this.enemies = new ArrayList<Enemy>();
 		Random rand = new Random();
 		while (numberOfEnemies-- != 0) {
@@ -125,13 +127,13 @@ public class Plane {
 			Enemy enemy = null;
 			switch (EnemyType.getRandom()) {
 				case BAT:
-					enemy = new Bat(p, 1);
+					enemy = new Bat(p, 1, numberOfEnemies);
 					break;
 				case GOO:
-					enemy = new Goo(p, 1);
+					enemy = new Goo(p, 1, numberOfEnemies);
 					break;
 				default:
-					enemy = new ErrorEnemy(p, 1);
+					enemy = new ErrorEnemy(p, 1,numberOfEnemies);
 					break;
 			}
 			this.cells[p.getY()][p.getX()] = enemy.getCell();

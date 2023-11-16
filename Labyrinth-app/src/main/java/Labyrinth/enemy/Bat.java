@@ -15,8 +15,8 @@ public class Bat extends AbstrEnemy {
 	}
 
 
-	public Bat(Point point, int hp) {
-		super(point, hp, null, EnemyType.BAT);
+	public Bat(Point point, int hp, int lvl) {
+		super(point, hp, lvl, null, EnemyType.BAT);
 		super.cell = getRandomCell();
 	}
 

@@ -25,4 +25,6 @@ public interface Enemy {
 	public int getHp();
 
 	public void reduseHp(int value);
+
+	public int getLVL();
 }

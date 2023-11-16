@@ -113,8 +113,12 @@ public class Session {
 			app.setGameState(GameState.MAP);
 			app.destroyEnemy(battlefield.getEnemy(), battlefield.winner());
 			int curLevel = app.getCurrentLevel();
-			sendPhoto(String.format("Enemies defeated: %d\nLevel: %d", app.getEnemiesDefeated(),
-					curLevel), curLevel, GameState.MAP);
+			if (battlefield.winner()) {
+				sendPhoto(String.format("Enemies defeated: %d\nLevel: %d", app.getEnemiesDefeated(),
+						curLevel), curLevel, GameState.MAP);
+			} else {
+				sendPhoto("Player was defeated", curLevel, GameState.MAP);
+			}
 		}
 	}
 

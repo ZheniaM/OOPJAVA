@@ -12,8 +12,8 @@ public class ErrorEnemy extends AbstrEnemy {
 		possibleCells = Arrays.asList(c);
 	}
 
-	public ErrorEnemy(Point point, int hp) {
-		super(point, hp, null, EnemyType.ENEMY_ERROR);
+	public ErrorEnemy(Point point, int hp,int lvl) {
+		super(point, hp, lvl, null, EnemyType.ENEMY_ERROR);
 		this.cell = getRandomCell();
 	}
 
@@ -24,5 +24,4 @@ public class ErrorEnemy extends AbstrEnemy {
 	public Cell getRandomCell() {
 		return possibleCells.get(0);
 	}
-	
 }

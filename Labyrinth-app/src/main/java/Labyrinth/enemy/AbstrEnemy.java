@@ -2,9 +2,12 @@ package Labyrinth.enemy;
 
 import Labyrinth.Cell;
 import Labyrinth.Direction;
+import Labyrinth.Plane;
 import Labyrinth.Point;
 
 public abstract class AbstrEnemy extends Point implements Enemy {
+	public int lvl;
+	protected int xp;
 	protected int hp;
 	private int last_x;
 	private int last_y;
@@ -13,9 +16,10 @@ public abstract class AbstrEnemy extends Point implements Enemy {
 	protected Cell cell;
 	protected EnemyType type;
 
-	protected AbstrEnemy(Point point, int hp, Cell cell, EnemyType type) {
+	protected AbstrEnemy(Point point, int hp, int lvl, Cell cell, EnemyType type) {
 		super(point);
-		this.hp = hp;
+		this.lvl = Plane.numberOfEnemiesonLVL;
+		this.hp = hp + lvl;
 		this.cell = cell;
 		this.standsOn = Cell.FLOOR;
 		this.type = type;
@@ -74,5 +78,9 @@ public abstract class AbstrEnemy extends Point implements Enemy {
 
 	public void reduseHp(int value) {
 		this.hp -= value;
+	}
+
+	public int getLVL() {
+		return lvl;
 	}
 }

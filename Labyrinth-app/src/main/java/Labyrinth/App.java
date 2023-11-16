@@ -26,7 +26,7 @@ public class App {
 	private Enemy battleWith = null;
 	private Battlefield battlefield = null;
 	private Plane map;
-	private Player player;
+	public Player player;
 	private int playerOnLevel = 0;
 	private boolean playerChangedLevel = false;
 	private int enemiesDefeated;
@@ -83,7 +83,8 @@ public class App {
 	public String movePlayer(String direction) throws Exception {
 		if (this.player.setDirection(direction)) {
 			movePlayer();
-			return String.format("Level: %d", playerOnLevel);
+			return String.format("Level: %d\nLevel of player: %d\nLevel of each monster: %d",
+					playerOnLevel, this.player.getLVL(), Plane.numberOfEnemiesonLVL);
 		}
 		return "[ERROR] incorrect input\n\n" + App.helpMessage;
 	}

@@ -4,7 +4,9 @@ import Labyrinth.Cell.CellType;
 
 public class Player extends Point {
 	// static public final int maxHp = 100;
+	private int xp = 0;
 	private int hp = 14;
+	private int lvl = 1;
 	private int last_x;
 	private int last_y;
 	private Direction direction;
@@ -27,6 +29,23 @@ public class Player extends Point {
 
 	public void reduseHp(int value) {
 		this.hp -= value;
+	}
+
+	public int getXp() {
+		return this.xp;
+	}
+
+	public int getLVL() {
+		return this.lvl;
+	}
+
+	public void increseXp(int value) {
+		this.xp += value;
+		this.lvl = xp/2 +1;
+	}
+
+	public void increseHp(int lvl) {
+		this.hp = 14 + lvl;
 	}
 
 	public void setDirection(Direction direction) {

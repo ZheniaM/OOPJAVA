@@ -14,8 +14,8 @@ public class Goo extends AbstrEnemy {
 		possibleCells = Arrays.asList(c);
 	}
 
-	public Goo(Point point, int hp) {
-		super(point, hp, null, EnemyType.GOO);
+	public Goo(Point point, int hp, int lvl) {
+		super(point, hp, lvl, null, EnemyType.GOO);
 		this.cell = getRandomCell();
 	}
 
