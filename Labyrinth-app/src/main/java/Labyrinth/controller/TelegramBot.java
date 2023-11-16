@@ -1,9 +1,10 @@
 package Labyrinth.controller;
 
+import java.io.File;
 import java.io.IOException;
+import org.apache.commons.io.FileUtils;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import Labyrinth.ReaderFromResoucre;
 
 public class TelegramBot extends TelegramLongPollingBot {
 
@@ -14,18 +15,13 @@ public class TelegramBot extends TelegramLongPollingBot {
 
 	@Override
 	public String getBotToken() {
-		/*
-		 * ClassLoader classLoader = getClass().getClassLoader(); // try { // TODO String s = new
-		 * String(getClass().getResourceAsStream("tgToken.txt").readAllBytes(), "UTF-8"); // TODO }
-		 * catch (Exception e) { e.printStackTrace(); } // File fileToken = new
-		 * File(classLoader.getResource("tgToken.txt").getFile()); try { String token =
-		 * FileUtils.readFileToString(fileToken, "UTF-8"); return token; } catch (IOException e) {
-		 * e.printStackTrace(); return ""; }
-		 */
-
+		ClassLoader classLoader = getClass().getClassLoader();
+		File fileToken = new File(classLoader.getResource("tgToken.txt").getFile());
 		try {
-			return new ReaderFromResoucre("tgToken.txt").getString();
+			String token = FileUtils.readFileToString(fileToken, "UTF-8");
+			return token;
 		} catch (IOException e) {
+			e.printStackTrace();
 			return "";
 		}
 	}
