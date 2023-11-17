@@ -5,7 +5,6 @@ public enum AbilityP {
 	PUNCH("/punch", 2), //
 	FIRE_BALL("/fire_ball", 18), //
 	HEAL("/heal", -4), //
-	BLOCK("/block", 0), //
 	SKIP_TURN("/skip_turn", 0); //
 
 	private final String command;

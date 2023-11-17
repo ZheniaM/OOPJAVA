@@ -16,8 +16,7 @@ public enum GameState {
 	}), //
 	BATTLE(new String[][] { //
 			{"/punch", "/fire_ball"}, //
-			{"/heal", "/block"}, //
-			{"/skip_turn"} //
+			{"/heal", "/skip_turn"}//
 	}); //
 
 	private final ReplyKeyboardMarkup markup;

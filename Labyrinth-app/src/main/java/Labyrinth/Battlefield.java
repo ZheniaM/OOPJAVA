@@ -29,7 +29,6 @@ public class Battlefield {
 				message += "You heal yourself";
 				break;
 			case SKIP_TURN:
-			case BLOCK:
 				message += "Player does not respond";
 				break;
 			default:
@@ -43,7 +42,6 @@ public class Battlefield {
 				message += ", Enemy heals itself";
 				break;
 			case SKIP_TURN:
-			case BLOCK:
 				message += ", Enemy does not respond";
 				break;
 			default:

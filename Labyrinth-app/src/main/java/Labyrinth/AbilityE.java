@@ -6,7 +6,6 @@ public enum AbilityE {
 	PUNCH(1), //
 	FIRE_BALL(1), //
 	HEAL(-2), //
-	BLOCK(0), //
 	SKIP_TURN(0); //
 
 	private static final Random rand = new Random();
