@@ -13,14 +13,14 @@ public class ReaderFromResoucre {
 
 	public ReaderFromResoucre(String name) {
 		this.originalName = name;
-		System.out.println("[READING] " + this.originalName);
+		System.out.println("\u001B[32m[READING]\u001B[0m " + this.originalName);
 	}
 
 	private InputStream getInputStream() throws NoSuchFileException {
 		String name = String.format("/%s", this.originalName);
 		InputStream is = ReaderFromResoucre.class.getResourceAsStream(name);
 		if (is == null) {
-			System.out.println(String.format("[ERROR] with %s", this.originalName));
+			System.out.println(String.format("\u001B[33m[WARNING]\u001B[0m with %s", this.originalName));
 			throw new NoSuchFileException(name);
 		}
 		return is;
@@ -51,7 +51,7 @@ public class ReaderFromResoucre {
 			res = new InputFile(is, this.originalName);
 		} catch (IOException e) {
 			e.printStackTrace();
-			System.out.println(String.format("[ERROR] with %s reading", this.originalName));
+			System.out.println(String.format("\u001B[31m[ERROR]\u001B[0m with %s reading", this.originalName));
 		}
 		return res;
 	}
