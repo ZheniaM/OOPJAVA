@@ -5,8 +5,8 @@ import Labyrinth.enemy.Enemy;
 public class Battlefield {
 	private Player player;
 	private Enemy enemy;
-	private AbilityP abilityP;
-	private AbilityE abilityE;
+	AbilityP abilityP;
+	AbilityE abilityE;
 
 	Battlefield(Player player, Enemy enemy) {
 		this.player = player;
